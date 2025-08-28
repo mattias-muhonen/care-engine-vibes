@@ -3,6 +3,7 @@ import Navigation from "@/components/Navigation"
 import Dashboard from "@/pages/Dashboard"
 import ActionQueue from "@/pages/ActionQueue"
 import Configuration from "@/pages/Configuration"
+import AuditLog from "@/pages/AuditLog"
 import Home from "@/pages/Home"
 import About from "@/pages/About"
 import Components from "@/pages/Components"
@@ -17,7 +18,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/actions" element={<ActionQueue />} />
             <Route path="/config" element={<Configuration />} />
-            <Route path="/audit" element={<div className="p-8">Audit Log - Coming Soon</div>} />
+            <Route path="/audit" element={<AuditLog />} />
             
             {/* Original demo pages */}
             <Route path="/demo" element={<Home />} />
