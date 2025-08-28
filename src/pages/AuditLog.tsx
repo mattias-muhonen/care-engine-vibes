@@ -25,7 +25,7 @@ import {
 } from "lucide-react"
 import { mockUsers, mockPatients } from "@/lib/mockData"
 import { dutch, formatDutchDateTime, formatDutchDate } from "@/lib/dutch"
-import type { AuditEvent, User, AuditEventType, ComplianceReport } from "@/types/audit"
+import type { AuditEvent, User as AuditUser, AuditEventType, ComplianceReport } from "@/types/audit"
 
 // Generate mock audit events
 const generateMockAuditEvents = (): AuditEvent[] => {
@@ -76,7 +76,7 @@ const generateMockAuditEvents = (): AuditEvent[] => {
   return events.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
 }
 
-const getEventDescription = (eventType: AuditEventType, user: User, patient?: typeof mockPatients[0]): string => {
+const getEventDescription = (eventType: AuditEventType, user: AuditUser, patient?: typeof mockPatients[0]): string => {
   switch (eventType) {
     case 'patient_viewed':
       return `${user.name} heeft patiënt ${patient?.firstName} ${patient?.lastName} bekeken`

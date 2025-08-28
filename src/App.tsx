@@ -11,9 +11,9 @@ import Components from "@/pages/Components"
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen">
         <Navigation />
-        <main>
+        <main className="container mx-auto px-6 py-8 space-y-8">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/actions" element={<ActionQueue />} />

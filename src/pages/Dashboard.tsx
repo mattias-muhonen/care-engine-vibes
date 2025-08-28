@@ -36,22 +36,22 @@ function PatientRow({ patient, isSelected, onSelect, onViewDetails }: PatientRow
 
   const getRiskBadgeColor = (risk: RiskLevel) => {
     switch (risk) {
-      case 'high': return 'bg-red-500 hover:bg-red-600 text-white'
-      case 'medium': return 'bg-orange-500 hover:bg-orange-600 text-white'
-      case 'low': return 'bg-green-500 hover:bg-green-600 text-white'
+      case 'high': return 'risk-high'
+      case 'medium': return 'risk-medium'
+      case 'low': return 'risk-low'
     }
   }
 
   const getHbA1cStatus = (hba1c: number) => {
-    if (hba1c < 53) return { color: 'text-green-600', status: 'Goed' }
-    if (hba1c <= 63) return { color: 'text-orange-600', status: 'Acceptabel' }
-    return { color: 'text-red-600', status: 'Actie nodig' }
+    if (hba1c < 53) return { color: 'text-emerald-600 font-semibold', status: 'Goed' }
+    if (hba1c <= 63) return { color: 'text-amber-600 font-semibold', status: 'Acceptabel' }
+    return { color: 'text-red-600 font-semibold', status: 'Actie nodig' }
   }
 
   const hba1cStatus = latestLab ? getHbA1cStatus(latestLab.hba1c) : null
 
   return (
-    <TableRow className="hover:bg-muted/50">
+    <TableRow className="table-row-hover border-b border-border/30">
       <TableCell>
         <Checkbox 
           checked={isSelected} 
@@ -67,7 +67,7 @@ function PatientRow({ patient, isSelected, onSelect, onViewDetails }: PatientRow
         </div>
       </TableCell>
       <TableCell>
-        <Badge className={getRiskBadgeColor(patient.riskLevel)}>
+        <Badge className={`status-indicator ${getRiskBadgeColor(patient.riskLevel)}`}>
           {dutch.riskLevels[patient.riskLevel]}
         </Badge>
       </TableCell>
@@ -335,103 +335,125 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">{dutch.cohortOverview}</h1>
-          <p className="text-muted-foreground">
-            Overzicht van diabetes patiënten die buiten de NHG-richtlijnen vallen
-          </p>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-primary/10 via-blue-50 to-indigo-50 px-6 py-3 rounded-2xl border border-primary/20 shadow-sm">
+          <Users className="h-6 w-6 text-primary" />
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            {dutch.cohortOverview}
+          </h1>
         </div>
+        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          Overzicht van diabetes patiënten die buiten de NHG-richtlijnen vallen en actieve monitoring vereisen
+        </p>
+      </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Totaal Patiënten</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{riskCounts.total}</div>
-              <p className="text-xs text-muted-foreground">Actieve diabetes patiënten</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Hoog Risico</CardTitle>
-              <AlertTriangle className="h-4 w-4 text-red-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-red-600">{riskCounts.high}</div>
-              <p className="text-xs text-muted-foreground">Directe actie vereist</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Gemiddeld Risico</CardTitle>
-              <Clock className="h-4 w-4 text-orange-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-orange-600">{riskCounts.medium}</div>
-              <p className="text-xs text-muted-foreground">Monitoring nodig</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Laag Risico</CardTitle>
-              <TrendingUp className="h-4 w-4 text-green-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{riskCounts.low}</div>
-              <p className="text-xs text-muted-foreground">Routine controle</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Filters and Search */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Filter className="h-5 w-5" />
-              <span>Filters en zoeken</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Zoek op naam of BSN..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-8"
-                  />
-                </div>
-              </div>
-              <Select value={riskFilter} onValueChange={setRiskFilter}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Alle risiconiveaus</SelectItem>
-                  <SelectItem value="high">Hoog risico</SelectItem>
-                  <SelectItem value="medium">Gemiddeld risico</SelectItem>
-                  <SelectItem value="low">Laag risico</SelectItem>
-                </SelectContent>
-              </Select>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="medical-card group hover:scale-105">
+          <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-slate-700">Totaal Patiënten</CardTitle>
+            <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl shadow-lg">
+              <Users className="h-5 w-5 text-white" />
             </div>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              {riskCounts.total}
+            </div>
+            <p className="text-sm text-muted-foreground font-medium mt-2">Actieve diabetes patiënten</p>
           </CardContent>
         </Card>
 
-        {/* Bulk Actions */}
-        {selectedPatients.length > 0 && (
-          <Card className="mb-6 border-primary">
-            <CardContent className="py-4">
+        <Card className="medical-card group hover:scale-105">
+          <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-slate-700">Hoog Risico</CardTitle>
+            <div className="p-2 bg-gradient-to-r from-red-500 to-red-600 rounded-xl shadow-lg">
+              <AlertTriangle className="h-5 w-5 text-white" />
+            </div>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="text-3xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+              {riskCounts.high}
+            </div>
+            <p className="text-sm text-muted-foreground font-medium mt-2">Directe actie vereist</p>
+          </CardContent>
+        </Card>
+
+        <Card className="medical-card group hover:scale-105">
+          <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-slate-700">Gemiddeld Risico</CardTitle>
+            <div className="p-2 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl shadow-lg">
+              <Clock className="h-5 w-5 text-white" />
+            </div>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="text-3xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
+              {riskCounts.medium}
+            </div>
+            <p className="text-sm text-muted-foreground font-medium mt-2">Monitoring nodig</p>
+          </CardContent>
+        </Card>
+
+        <Card className="medical-card group hover:scale-105">
+          <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-slate-700">Laag Risico</CardTitle>
+            <div className="p-2 bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl shadow-lg">
+              <TrendingUp className="h-5 w-5 text-white" />
+            </div>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="text-3xl font-bold bg-gradient-to-r from-emerald-500 to-green-500 bg-clip-text text-transparent">
+              {riskCounts.low}
+            </div>
+            <p className="text-sm text-muted-foreground font-medium mt-2">Routine controle</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filters and Search */}
+      <Card className="medical-card">
+        <CardHeader className="medical-card-header">
+          <CardTitle className="flex items-center space-x-3">
+            <div className="p-2 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl shadow-lg">
+              <Filter className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-lg font-semibold">Filters en zoeken</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                <Input
+                  placeholder="🔍 Zoek op naam of BSN..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-11 h-12 text-base border-border/50 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                />
+              </div>
+            </div>
+            <Select value={riskFilter} onValueChange={setRiskFilter}>
+              <SelectTrigger className="w-[240px] h-12 border-border/50 focus:border-primary focus:ring-2 focus:ring-primary/20">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">📊 Alle risiconiveaus</SelectItem>
+                <SelectItem value="high">🔴 Hoog risico</SelectItem>
+                <SelectItem value="medium">🟡 Gemiddeld risico</SelectItem>
+                <SelectItem value="low">🟢 Laag risico</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Bulk Actions */}
+      {selectedPatients.length > 0 && (
+        <Card className="medical-card border-2 border-primary/30 bg-gradient-to-r from-primary/5 to-blue-50">
+          <CardContent className="py-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Badge variant="secondary">{selectedPatients.length} geselecteerd</Badge>
@@ -451,34 +473,47 @@ export default function Dashboard() {
                   </Button>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
+          </CardContent>
+        </Card>
+      )}
 
-        {/* Patient Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Patiënten overzicht ({filteredPatients.length})</CardTitle>
-            <CardDescription>
-              Gesorteerd op risico niveau en urgentie
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+      {/* Patient Table */}
+      <Card className="medical-card">
+        <CardHeader className="medical-card-header">
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl shadow-lg">
+                <Users className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <div className="text-lg font-semibold">Patiënten overzicht</div>
+                <div className="text-sm font-medium text-primary">
+                  {filteredPatients.length} van {mockPatients.length} patiënten
+                </div>
+              </div>
+            </div>
+          </CardTitle>
+          <CardDescription className="text-base">
+            📊 Gesorteerd op risico niveau en urgentie voor optimale zorgcoördinatie
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-hidden rounded-b-xl">
             <Table>
-              <TableHeader>
+              <TableHeader className="bg-gradient-to-r from-slate-50 to-gray-50 border-b border-border/30">
                 <TableRow>
-                  <TableHead className="w-12">
+                  <TableHead className="w-12 font-semibold text-slate-700">
                     <Checkbox
                       checked={selectedPatients.length === filteredPatients.length && filteredPatients.length > 0}
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
-                  <TableHead>Patiënt</TableHead>
-                  <TableHead>Risico</TableHead>
-                  <TableHead>HbA1c</TableHead>
-                  <TableHead>Laatste bezoek</TableHead>
-                  <TableHead>Waarschuwingen</TableHead>
-                  <TableHead>Acties</TableHead>
+                  <TableHead className="font-semibold text-slate-700">👤 Patiënt</TableHead>
+                  <TableHead className="font-semibold text-slate-700">⚠️ Risico</TableHead>
+                  <TableHead className="font-semibold text-slate-700">🩸 HbA1c</TableHead>
+                  <TableHead className="font-semibold text-slate-700">📅 Laatste bezoek</TableHead>
+                  <TableHead className="font-semibold text-slate-700">🔔 Waarschuwingen</TableHead>
+                  <TableHead className="font-semibold text-slate-700">⚙️ Acties</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -493,16 +528,16 @@ export default function Dashboard() {
                 ))}
               </TableBody>
             </Table>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Patient Details Dialog */}
-        <PatientDetailsDialog
-          patient={selectedPatient}
-          open={detailsOpen}
-          onOpenChange={setDetailsOpen}
-        />
-      </div>
+      {/* Patient Details Dialog */}
+      <PatientDetailsDialog
+        patient={selectedPatient}
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+      />
     </div>
   )
 }
