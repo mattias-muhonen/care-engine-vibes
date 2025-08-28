@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Navigation from "@/components/Navigation"
+import Dashboard from "@/pages/Dashboard"
 import Home from "@/pages/Home"
 import About from "@/pages/About"
 import Components from "@/pages/Components"
@@ -11,7 +12,13 @@ function App() {
         <Navigation />
         <main>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/actions" element={<div className="p-8">Action Queue - Coming Soon</div>} />
+            <Route path="/config" element={<div className="p-8">Configuration - Coming Soon</div>} />
+            <Route path="/audit" element={<div className="p-8">Audit Log - Coming Soon</div>} />
+            
+            {/* Original demo pages */}
+            <Route path="/demo" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/components" element={<Components />} />
           </Routes>

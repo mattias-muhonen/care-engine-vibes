@@ -1,24 +1,28 @@
 import { Link, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { Sparkles, Home, Info, Layers } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Activity, Users, ClipboardCheck, Settings, FileText, AlertTriangle } from "lucide-react"
+import { dutch } from "@/lib/dutch"
 
 const navItems = [
-  { name: "Home", path: "/", icon: Home },
-  { name: "About", path: "/about", icon: Info },
-  { name: "Components", path: "/components", icon: Layers },
+  { name: dutch.cohortOverview, path: "/", icon: Users },
+  { name: dutch.actionQueue, path: "/actions", icon: ClipboardCheck },
+  { name: dutch.configuration, path: "/config", icon: Settings },
+  { name: dutch.auditLog, path: "/audit", icon: FileText },
 ]
 
 export default function Navigation() {
   const location = useLocation()
+  const emergencyStopActive = false // This would come from system state
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-gradient-to-r from-background/95 via-background/98 to-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center space-x-8">
-            <Link to="/" className="flex items-center space-x-2 text-xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent hover:scale-105 transition-transform">
-              <Sparkles className="h-6 w-6 text-primary" />
-              <span>React SPA</span>
+            <Link to="/" className="flex items-center space-x-2 text-lg font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent hover:scale-105 transition-transform">
+              <Activity className="h-6 w-6 text-primary" />
+              <span>Diabeteszorg Automatisering</span>
             </Link>
             <div className="hidden md:flex space-x-1">
               {navItems.map((item) => {
@@ -43,12 +47,22 @@ export default function Navigation() {
               })}
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
+            {emergencyStopActive && (
+              <Badge variant="destructive" className="flex items-center space-x-1">
+                <AlertTriangle className="h-3 w-3" />
+                <span>{dutch.emergencyStopActive}</span>
+              </Badge>
+            )}
+            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span>{dutch.systemStatus}: Actief</span>
+            </div>
             <Button variant="outline" size="sm" className="hover:bg-accent/50 hover:scale-105 transition-all">
-              Sign In
+              Dr. M. van der Berg (POH-S)
             </Button>
-            <Button size="sm" className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg hover:shadow-xl transition-all">
-              Get Started
+            <Button size="sm" variant="ghost" className="hover:bg-accent/50 transition-all">
+              {dutch.logout}
             </Button>
           </div>
         </div>

@@ -12,7 +12,6 @@ import {
   Settings, 
   Tag, 
   Type, 
-  ToggleLeft, 
   Sliders, 
   Palette,
   Code2,
@@ -169,7 +168,7 @@ export default function Components() {
                 <Checkbox 
                   id="terms" 
                   checked={checkboxChecked}
-                  onCheckedChange={setCheckboxChecked}
+                  onCheckedChange={(checked) => setCheckboxChecked(checked === true)}
                   className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-primary data-[state=checked]:to-primary/80"
                 />
                 <Label htmlFor="terms" className="text-sm cursor-pointer">
