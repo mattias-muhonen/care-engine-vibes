@@ -210,7 +210,13 @@ function CohortDetailPanel({ cohort, patients, onClose, onSelectPatient }: Cohor
                           <span className={`font-medium ${
                             latestHbA1c && latestHbA1c > 70 ? 'text-red-600' : 'text-green-600'
                           }`}>
-                            {latestHbA1c ? `${latestHbA1c} <FormattedMessage id="cohortDetail.vitals.units" />` : <FormattedMessage id="cohortDetail.vitals.noData" />}
+                            {latestHbA1c ? (
+                              <>
+                                {latestHbA1c} <FormattedMessage id="cohortDetail.vitals.units" />
+                              </>
+                            ) : (
+                              <FormattedMessage id="cohortDetail.vitals.noData" />
+                            )}
                           </span>
                         </div>
                         <div>
