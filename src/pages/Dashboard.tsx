@@ -85,36 +85,60 @@ function PatientRow({ patient, isSelected, onSelect, onViewDetails }: PatientRow
           <span className="text-muted-foreground">Geen data</span>
         )}
       </TableCell>
-      <TableCell>
+      <TableCell className="table-cell-padding">
         {patient.lastVisit ? (
           <div className="space-y-1">
-            <div>{formatDutchDate(patient.lastVisit)}</div>
-            <div className="text-xs text-muted-foreground">
-              {daysSinceLastVisit} dagen geleden
+            <div className="font-medium text-base" aria-label={`Laatste bezoek: ${formatDutchDate(patient.lastVisit)}`}>
+              {formatDutchDate(patient.lastVisit)}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              <span className="sr-only">Dat is </span>{daysSinceLastVisit} dagen geleden
             </div>
           </div>
         ) : (
-          <span className="text-muted-foreground">Onbekend</span>
+          <span className="text-muted-foreground" aria-label="Laatste bezoek onbekend">Onbekend</span>
         )}
       </TableCell>
-      <TableCell>
-        <div className="flex space-x-2">
+      <TableCell className="table-cell-padding">
+        <div className="flex flex-wrap gap-2" role="list" aria-label="Waarschuwingen">
           {patient.flags.slice(0, 2).map((flag) => (
-            <Badge key={flag.id} variant="outline" className="text-xs">
-              {flag.type === 'high_hba1c' && <AlertTriangle className="h-3 w-3 mr-1" />}
-              {flag.type === 'overdue_hba1c' && <Clock className="h-3 w-3 mr-1" />}
-              {flag.type === 'overdue_visit' && <Calendar className="h-3 w-3 mr-1" />}
-              {flag.message.slice(0, 20)}...
+            <Badge 
+              key={flag.id} 
+              variant="outline" 
+              className="text-sm px-3 py-1 inline-flex items-center gap-2" 
+              role="listitem"
+              aria-label={`Waarschuwing: ${flag.message}`}
+            >
+              {flag.type === 'high_hba1c' && <AlertTriangle className="h-3 w-3" aria-hidden="true" />}
+              {flag.type === 'overdue_hba1c' && <Clock className="h-3 w-3" aria-hidden="true" />}
+              {flag.type === 'overdue_visit' && <Calendar className="h-3 w-3" aria-hidden="true" />}
+              <span className="truncate">{flag.message.slice(0, 25)}{flag.message.length > 25 ? '...' : ''}</span>
             </Badge>
           ))}
           {patient.flags.length > 2 && (
-            <Badge variant="outline">+{patient.flags.length - 2}</Badge>
+            <Badge 
+              variant="outline" 
+              className="text-sm px-3 py-1" 
+              role="listitem"
+              aria-label={`En nog ${patient.flags.length - 2} waarschuwingen`}
+            >
+              +{patient.flags.length - 2}
+            </Badge>
+          )}
+          {patient.flags.length === 0 && (
+            <span className="text-sm text-muted-foreground" aria-label="Geen waarschuwingen">-</span>
           )}
         </div>
       </TableCell>
-      <TableCell>
-        <Button variant="outline" size="sm" onClick={onViewDetails}>
-          <Eye className="h-4 w-4 mr-1" />
+      <TableCell className="table-cell-padding">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={onViewDetails}
+          className="clickable-target btn-medical-secondary h-auto min-w-[100px]"
+          aria-label={`Bekijk details van patiënt ${patient.firstName} ${patient.lastName}`}
+        >
+          <Eye className="h-4 w-4 mr-2" aria-hidden="true" />
           {dutch.view}
         </Button>
       </TableCell>
@@ -350,110 +374,139 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="medical-card group hover:scale-105">
-          <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-semibold text-slate-700">Totaal Patiënten</CardTitle>
-            <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl shadow-lg">
-              <Users className="h-5 w-5 text-white" />
+      <div className="grid-responsive">
+        <Card className="medical-card group hover:scale-105" role="region" aria-labelledby="total-patients-title">
+          <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0">
+            <CardTitle id="total-patients-title" className="text-base font-semibold text-slate-700">
+              Totaal Patiënten
+            </CardTitle>
+            <div className="p-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl shadow-lg" aria-hidden="true">
+              <Users className="h-6 w-6 text-white" />
             </div>
           </CardHeader>
-          <CardContent className="pt-4">
-            <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <CardContent className="medical-card-content">
+            <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent" aria-label="{riskCounts.total} totaal patiënten">
               {riskCounts.total}
             </div>
-            <p className="text-sm text-muted-foreground font-medium mt-2">Actieve diabetes patiënten</p>
+            <p className="text-base text-muted-foreground font-medium mt-3">Actieve diabetes patiënten</p>
           </CardContent>
         </Card>
 
-        <Card className="medical-card group hover:scale-105">
-          <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-semibold text-slate-700">Hoog Risico</CardTitle>
-            <div className="p-2 bg-gradient-to-r from-red-500 to-red-600 rounded-xl shadow-lg">
-              <AlertTriangle className="h-5 w-5 text-white" />
+        <Card className="medical-card group hover:scale-105" role="region" aria-labelledby="high-risk-title">
+          <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0">
+            <CardTitle id="high-risk-title" className="text-base font-semibold text-slate-700">
+              Hoog Risico
+            </CardTitle>
+            <div className="p-3 bg-gradient-to-r from-red-500 to-red-600 rounded-xl shadow-lg" aria-hidden="true">
+              <AlertTriangle className="h-6 w-6 text-white" />
             </div>
           </CardHeader>
-          <CardContent className="pt-4">
-            <div className="text-3xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+          <CardContent className="medical-card-content">
+            <div className="text-4xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent" aria-label="{riskCounts.high} patiënten met hoog risico">
               {riskCounts.high}
             </div>
-            <p className="text-sm text-muted-foreground font-medium mt-2">Directe actie vereist</p>
+            <p className="text-base text-muted-foreground font-medium mt-3">Directe actie vereist</p>
           </CardContent>
         </Card>
 
-        <Card className="medical-card group hover:scale-105">
-          <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-semibold text-slate-700">Gemiddeld Risico</CardTitle>
-            <div className="p-2 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl shadow-lg">
-              <Clock className="h-5 w-5 text-white" />
+        <Card className="medical-card group hover:scale-105" role="region" aria-labelledby="medium-risk-title">
+          <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0">
+            <CardTitle id="medium-risk-title" className="text-base font-semibold text-slate-700">
+              Gemiddeld Risico
+            </CardTitle>
+            <div className="p-3 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl shadow-lg" aria-hidden="true">
+              <Clock className="h-6 w-6 text-white" />
             </div>
           </CardHeader>
-          <CardContent className="pt-4">
-            <div className="text-3xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
+          <CardContent className="medical-card-content">
+            <div className="text-4xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent" aria-label="{riskCounts.medium} patiënten met gemiddeld risico">
               {riskCounts.medium}
             </div>
-            <p className="text-sm text-muted-foreground font-medium mt-2">Monitoring nodig</p>
+            <p className="text-base text-muted-foreground font-medium mt-3">Monitoring nodig</p>
           </CardContent>
         </Card>
 
-        <Card className="medical-card group hover:scale-105">
-          <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-semibold text-slate-700">Laag Risico</CardTitle>
-            <div className="p-2 bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl shadow-lg">
-              <TrendingUp className="h-5 w-5 text-white" />
+        <Card className="medical-card group hover:scale-105" role="region" aria-labelledby="low-risk-title">
+          <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0">
+            <CardTitle id="low-risk-title" className="text-base font-semibold text-slate-700">
+              Laag Risico
+            </CardTitle>
+            <div className="p-3 bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl shadow-lg" aria-hidden="true">
+              <TrendingUp className="h-6 w-6 text-white" />
             </div>
           </CardHeader>
-          <CardContent className="pt-4">
-            <div className="text-3xl font-bold bg-gradient-to-r from-emerald-500 to-green-500 bg-clip-text text-transparent">
+          <CardContent className="medical-card-content">
+            <div className="text-4xl font-bold bg-gradient-to-r from-emerald-500 to-green-500 bg-clip-text text-transparent" aria-label="{riskCounts.low} patiënten met laag risico">
               {riskCounts.low}
             </div>
-            <p className="text-sm text-muted-foreground font-medium mt-2">Routine controle</p>
+            <p className="text-base text-muted-foreground font-medium mt-3">Routine controle</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Filters and Search */}
-      <Card className="medical-card">
+      <Card className="medical-card" role="search" aria-labelledby="search-filters-title">
         <CardHeader className="medical-card-header">
-          <CardTitle className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl shadow-lg">
-              <Filter className="h-5 w-5 text-white" />
+          <CardTitle id="search-filters-title" className="flex items-center space-x-3">
+            <div className="p-3 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl shadow-lg" aria-hidden="true">
+              <Filter className="h-6 w-6 text-white" />
             </div>
-            <span className="text-lg font-semibold">Filters en zoeken</span>
+            <span className="text-xl font-semibold">Filters en zoeken</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-6">
+        <CardContent className="medical-card-content">
+          <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex-1">
+              <label htmlFor="patient-search" className="sr-only">
+                Zoek patiënten op naam of BSN
+              </label>
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" aria-hidden="true" />
                 <Input
-                  placeholder="🔍 Zoek op naam of BSN..."
+                  id="patient-search"
+                  type="search"
+                  placeholder="Zoek op naam of BSN..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-11 h-12 text-base border-border/50 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                  className="form-input pl-12 text-base" 
+                  aria-describedby="search-help"
+                  autoComplete="off"
                 />
               </div>
+              <div id="search-help" className="text-sm text-muted-foreground mt-2">
+                Typ om te zoeken naar patiëntnaam of BSN nummer
+              </div>
             </div>
-            <Select value={riskFilter} onValueChange={setRiskFilter}>
-              <SelectTrigger className="w-[240px] h-12 border-border/50 focus:border-primary focus:ring-2 focus:ring-primary/20">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">📊 Alle risiconiveaus</SelectItem>
-                <SelectItem value="high">🔴 Hoog risico</SelectItem>
-                <SelectItem value="medium">🟡 Gemiddeld risico</SelectItem>
-                <SelectItem value="low">🟢 Laag risico</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="w-full lg:w-[280px]">
+              <label htmlFor="risk-filter" className="sr-only">
+                Filter patiënten op risiconiveau
+              </label>
+              <Select value={riskFilter} onValueChange={setRiskFilter}>
+                <SelectTrigger id="risk-filter" className="form-input h-auto p-0" aria-describedby="filter-help">
+                  <SelectValue placeholder="Selecteer risiconiveau" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Alle risiconiveaus</SelectItem>
+                  <SelectItem value="high">Hoog risico</SelectItem>
+                  <SelectItem value="medium">Gemiddeld risico</SelectItem>
+                  <SelectItem value="low">Laag risico</SelectItem>
+                </SelectContent>
+              </Select>
+              <div id="filter-help" className="text-sm text-muted-foreground mt-2">
+                Filter de lijst op risiconiveau
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Bulk Actions */}
       {selectedPatients.length > 0 && (
-        <Card className="medical-card border-2 border-primary/30 bg-gradient-to-r from-primary/5 to-blue-50">
-          <CardContent className="py-6">
+        <Card className="medical-card border-2 border-primary/30 bg-gradient-to-r from-primary/5 to-blue-50" role="toolbar" aria-labelledby="bulk-actions-title">
+          <CardContent className="medical-card-content">
+            <h3 id="bulk-actions-title" className="text-lg font-semibold mb-4 text-primary">
+              Bulk acties voor {selectedPatients.length} geselecteerde patiënten
+            </h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Badge variant="secondary">{selectedPatients.length} geselecteerd</Badge>
@@ -478,46 +531,63 @@ export default function Dashboard() {
       )}
 
       {/* Patient Table */}
-      <Card className="medical-card">
+      <Card className="medical-card" role="region" aria-labelledby="patient-table-title">
         <CardHeader className="medical-card-header">
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl shadow-lg">
-                <Users className="h-5 w-5 text-white" />
+          <CardTitle id="patient-table-title" className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl shadow-lg" aria-hidden="true">
+                <Users className="h-6 w-6 text-white" />
               </div>
               <div>
-                <div className="text-lg font-semibold">Patiënten overzicht</div>
-                <div className="text-sm font-medium text-primary">
-                  {filteredPatients.length} van {mockPatients.length} patiënten
+                <div className="text-xl font-semibold">Patiënten overzicht</div>
+                <div className="text-base font-medium text-primary" aria-live="polite">
+                  {filteredPatients.length} van {mockPatients.length} patiënten getoond
                 </div>
               </div>
             </div>
           </CardTitle>
-          <CardDescription className="text-base">
-            📊 Gesorteerd op risico niveau en urgentie voor optimale zorgcoördinatie
+          <CardDescription className="text-base mt-2">
+            Gesorteerd op risico niveau en urgentie voor optimale zorgcoördinatie
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-hidden rounded-b-xl">
-            <Table>
-              <TableHeader className="bg-gradient-to-r from-slate-50 to-gray-50 border-b border-border/30">
+        <div className="overflow-x-auto">
+          <Table role="table" aria-labelledby="patient-table-title" aria-describedby="patient-table-description">
+            <div id="patient-table-description" className="sr-only">
+              Tabel met patiëntgegevens inclusief risiconiveau, HbA1c waarden en laatste bezoekdatum. Gebruik tab om door de rijen te navigeren.
+            </div>
+            <TableHeader className="bg-gradient-to-r from-slate-50 to-gray-50 border-b border-border/30">
+              <TableRow role="row">
+                <TableHead className="table-cell-padding w-16 font-semibold text-slate-700">
+                  <Checkbox
+                    checked={selectedPatients.length === filteredPatients.length && filteredPatients.length > 0}
+                    onCheckedChange={handleSelectAll}
+                    aria-label="Selecteer alle patiënten"
+                    className="clickable-target"
+                  />
+                </TableHead>
+                <TableHead className="table-cell-padding font-semibold text-slate-700 min-w-[200px]">Patiënt</TableHead>
+                <TableHead className="table-cell-padding font-semibold text-slate-700 min-w-[120px]">Risico</TableHead>
+                <TableHead className="table-cell-padding font-semibold text-slate-700 min-w-[140px]">HbA1c</TableHead>
+                <TableHead className="table-cell-padding font-semibold text-slate-700 min-w-[150px]">Laatste bezoek</TableHead>
+                <TableHead className="table-cell-padding font-semibold text-slate-700 min-w-[160px]">Waarschuwingen</TableHead>
+                <TableHead className="table-cell-padding font-semibold text-slate-700 min-w-[120px]">Acties</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredPatients.length === 0 ? (
                 <TableRow>
-                  <TableHead className="w-12 font-semibold text-slate-700">
-                    <Checkbox
-                      checked={selectedPatients.length === filteredPatients.length && filteredPatients.length > 0}
-                      onCheckedChange={handleSelectAll}
-                    />
-                  </TableHead>
-                  <TableHead className="font-semibold text-slate-700">👤 Patiënt</TableHead>
-                  <TableHead className="font-semibold text-slate-700">⚠️ Risico</TableHead>
-                  <TableHead className="font-semibold text-slate-700">🩸 HbA1c</TableHead>
-                  <TableHead className="font-semibold text-slate-700">📅 Laatste bezoek</TableHead>
-                  <TableHead className="font-semibold text-slate-700">🔔 Waarschuwingen</TableHead>
-                  <TableHead className="font-semibold text-slate-700">⚙️ Acties</TableHead>
+                  <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
+                    <div className="flex flex-col items-center space-y-4">
+                      <Users className="h-12 w-12 text-muted-foreground/50" aria-hidden="true" />
+                      <div>
+                        <p className="text-lg font-medium">Geen patiënten gevonden</p>
+                        <p>Probeer uw zoekopdracht of filters aan te passen</p>
+                      </div>
+                    </div>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredPatients.map((patient) => (
+              ) : (
+                filteredPatients.map((patient) => (
                   <PatientRow
                     key={patient.id}
                     patient={patient}
@@ -525,11 +595,11 @@ export default function Dashboard() {
                     onSelect={(checked) => handleSelectPatient(patient.id, checked)}
                     onViewDetails={() => handleViewPatient(patient)}
                   />
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </Card>
 
       {/* Patient Details Dialog */}
