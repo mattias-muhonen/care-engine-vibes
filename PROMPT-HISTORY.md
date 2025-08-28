@@ -22,3 +22,6 @@ Continue to Milestone 2
 
 ### Prompt 7
 Continue with milestone 3
+
+### Prompt 8
+Add a language toggle to the TopBar

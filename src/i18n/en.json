@@ -11,5 +11,11 @@
   "config.title": "Configuration",
   "config.placeholder": "Loading configuration settings...",
   "audit.title": "Audit Log",
-  "audit.placeholder": "Loading audit log..."
+  "audit.placeholder": "Loading audit log...",
+  "dashboard.cohorts.title": "Patient Cohorts",
+  "dashboard.tiles.totalPatients": "Total patients",
+  "dashboard.tiles.activeCohorts": "Active cohorts", 
+  "dashboard.tiles.highRiskPatients": "High risk patients",
+  "dashboard.tiles.overdueReviews": "Overdue reviews",
+  "dashboard.tiles.pendingActions": "Pending actions"
 }

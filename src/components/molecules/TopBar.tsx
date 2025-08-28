@@ -1,4 +1,5 @@
 import { ChevronDown, Building2, User } from 'lucide-react'
+import LanguageToggle from '../atoms/LanguageToggle'
 
 function TopBar() {
   return (
@@ -14,6 +15,8 @@ function TopBar() {
       </div>
       
       <div className="flex items-center gap-3">
+        <LanguageToggle />
+        
         <div className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
           <User className="w-4 h-4 text-gray-600" />
           <span className="text-sm font-medium text-gray-900">
