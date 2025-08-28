@@ -45,38 +45,31 @@ Development / run commands (example)
 
 Commit
 - Always make sure build passes before commiting
-- Small commits per milestone.
-- PR title format: Claude: feat(poc): <short description>
-
-Testing & QA checklist (for PR)
-- App starts and routes render.
-- Cohort table filters work.
-- Cohort side panel shows patient list and rationale.
-- Patient detail shows demographics, consent, vitals timeline.
-- Mass action approval appends an audit entry to sessionStorage/audit view.
-- Colors comply with AA/AAA for contrast; keyboard navigation works.
+- Small commits per Milestone.
+- PR title format: Claude: <short description>
 
 Developer notes / tips
 - Use lucide-react for icons.
 - Use radix-ui primitives for accessible components where helpful.
 - Keep hover effects limited to color/border changes only.
-- Use atomic components everywhere.
+- Use atomic components everywhere and add components to atomic folders.
+- Always add translation when adding texts
 - For toasts use a minimal inline implementation (no external toast library unless already allowed).
 - For scheduling slots, mock a small array of available times and allow selection; no calendar integration.
 - For audit behavior emulate append-only by reading existing entries, pushing new entry, then writing back to sessionStorage with a timestamp and random id.
 
 Example small task order for implementation
 1. Init project and layout shell.
-2. Add atoms (Button, Icon wrapper).
+2. Add atoms (like Button, Icon wrapper, Page, Link, Title, Paragraph) and organisms (like Page, Navigation, Card)
 3. Add mocks and utils.
 4. Implement Dashboard view and CohortTable.
 5. Implement CohortDetail side panel and PatientDetail.
 6. Implement MassActions form and audit append to sessionStorage.
 7. Implement Audit view and kill-switch UI.
-8. Localize strings and run accessibility pass.
 
 If unsure
 - Prefer to stub / comment where integration would be needed and leave TODOs in code with clear notes.
+- Maintain a separate list of todos in TODO.md
 - Keep changes minimal per PR and include a short demo README entry for testers.
 
 End of instructions.

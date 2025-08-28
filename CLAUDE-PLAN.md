@@ -10,36 +10,36 @@ Scope (MVP)
 - Non-functional: Accessibility (AAA color contrast), Dutch localization stubs, responsive layout, inline Tailwind styles only, atomic component usage.
 
 Milestones
-1. Project skeleton (1 day)
-   - Create React app skeleton, routing, top bar, left nav, atomic component folder.
+1. Project skeleton  
+   - Create React app skeleton, routing, top bar, left nav, atomic component folders.
    - Add project README with run instructions.
    Acceptance: app starts, routes available, global layout renders.
 
-2. Mock data + utilities (0.5 day)
+2. Mock data + utilities
    - Add JSON mock files: patients.json, cohorts.json, audit.json.
    - Add small utilities for date formatting and consent filtering.
    Acceptance: components can import mock JSON and render lists.
 
-3. Dashboard and Cohort table (1.5 days)
+3. Dashboard and Cohort table
    - Implement tiles and cohort table with filters (condition, risk, reason flagged, last contact).
    - Cohort row opens Cohort Details side panel.
    Acceptance: filterable table, side panel opens and shows patient list & rationale.
 
-4. PatientDetail read-only and Vitals timeline (1 day)
+4. PatientDetail read-only and Vitals timeline  
    - Read-only demographics, consent, vitals timeline, pathway status, notes.
    Acceptance: Clicking patient from cohort opens PatientDetail panel.
 
-5. Mass Actions flow (2 days)
+5. Mass Actions flow  
    - Select cohort, preview message, pick mock slots, approve action → write to audit.json (client-side append emulation).
    - Success toast and Audit entry created.
    Acceptance: Approve action creates audit entry and shows success feedback.
 
-6. AuditLog viewer & Governance controls (0.5 day)
+6. AuditLog viewer & Governance controls
    - Show audit entries with timestamps, user, and details. Implement kill-switch UI toggle (client-side state).
    Acceptance: Audit entries show actions; kill-switch toggles automation state.
 
-7. Polish: localization, accessibility, styling, and README (1 day)
-   - Wire react-intl placeholders; ensure color palette, hover rules, tailwind inline usage.
+7. Polish: localization, accessibility, styling, and README  
+   - Make sure texts are translated; ensure color palette, hover rules, tailwind inline use
    Acceptance: Accessible color contrast, translations placeholders present, README updated.
 
 Deliverables

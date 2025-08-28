@@ -2,6 +2,13 @@
 
 A care-automation engine for Dutch general practice that identifies patients with chronic Type 2 diabetes falling outside NHG (Dutch GP guidelines) thresholds, prioritizes them for timely intervention, and uses agentic workflows to automate outreach and booking. The MVP delivers configurable clinical thresholds and pathways, complete auditability, and human-in-the-loop controls, streamlining work and boosting safety for GPs and POH‑S.
 
+## Narrative
+Martine, a POH‑S at a busy practice in Rotterdam, faces an ever-growing list of diabetes patients who need monitoring according to NHG standards. With different lab intervals, patient histories, and unpredictable appointment demand, she struggles to keep the cohort up-to-date, risking missed recalls and under-documented care.
+
+Upon using the Dutch GP Care Automation Engine, Martine authenticates and is greeted by a real-time dashboard. All diabetes patients falling outside target ranges are neatly tiered by urgency, with clear “why flagged” notes. Instead of manually writing messages and juggling calendars, Martine quickly reviews the system’s safe outreach drafts and approves them in bulk. Patients who need bookings are automatically scheduled into the practice's agenda, with conflict checks and reminders handled by the engine.
+
+Martine now spends more time with her patients and less on administration, while her GP and the practice manager enjoy complete audit trails and configuration flexibility. With NHG defaults baked in and no risk of system error thanks to strong controls and safety nets, the team confidently meets KPIs, increases patient safety, and demonstrates compliance—crucial both for their practice and growing insurer interest in performance-based care.
+
 ## Technologies
 This will be a Proof of Concept so a technically a simple SPA web application. It will be built with the following technologies:
 - React
@@ -22,7 +29,6 @@ Mock data will be required, that should be stored as json and imported directly 
 - Make a color palette which has a specific color for interactable elements as well as hover and active colors.
 - Hover effects only change colors and borders
 - Responsive for desktop, tablet
-
 
 ### Route/view details
 - Left rail navigation with Dashboard, Mass Actions, Config, Audit, and a top bar with practice switcher and user menu.
@@ -75,11 +81,6 @@ Mock data will be required, that should be stored as json and imported directly 
 - Incident Reporting: Flag and resolve actions or patients in error state.
 - Role-Based Controls: Define approver, reviewer, and admin rights.
 
-### Integrations (Priority: P0 - Must)
-- HIS/EHR Adapters: Import and export to selected Dutch EHRs/practice systems.
-- Scheduling Hook: Book into certified Dutch appointments modules.
-- Messaging Gateway: Connect to secure SMS/email gateway (e.g., Medimo, Siilo).
-
 ## User Experience
 
 
@@ -90,19 +91,6 @@ Mock data will be required, that should be stored as json and imported directly 
 - System seeds with default NHG thresholds/pathway templates.
 - Optional walkthrough highlights: dashboard, approval workflow, and settings.
 
-### Core Experience
-1. POH‑S/GP logs in, lands on dashboard with flagged diabetes cohort (out-of-threshold).
-   - Highlights overdue HbA1c/lab visits, color-coded by risk.
-   - Immediate validation: "Data up to date? Last lab feed import: [timestamp]."
-2. User reviews prioritized patients; can filter by risk, age, last check-in, etc.
-   - Clicking a patient brings up recent labs, visit summary, and suggested next action(s).
-3. User selects mass actions or works a single-patient queue.
-   - Approves customized, templated outreach (SMS/email/letter/call).
-   - Validates appointment slots (booking preview, real-time conflict detection).
-4. Approvals trigger live actions (messaging send, booking into schedule).
-   - System confirms action and saves a structured note for EHR export.
-5. User receives progress summary and follow-up reminders for unresponsive patients.
-
 ### Advanced Features & Edge Cases
 - Kill switch to pause all automations (urgent safety override).
 - Daily action cap (e.g., max bookings or outreach/day); user notified if limit reached.
@@ -111,10 +99,3 @@ Mock data will be required, that should be stored as json and imported directly 
 - Duplicate detection: suppress multiple bookings/messages for same patient within X days.
 - Staged rollout: enable features for test patients before live launch.
 
-
-## Narrative
-Martine, a POH‑S at a busy practice in Rotterdam, faces an ever-growing list of diabetes patients who need monitoring according to NHG standards. With different lab intervals, patient histories, and unpredictable appointment demand, she struggles to keep the cohort up-to-date, risking missed recalls and under-documented care.
-
-Upon using the Dutch GP Care Automation Engine, Martine authenticates and is greeted by a real-time dashboard. All diabetes patients falling outside target ranges are neatly tiered by urgency, with clear “why flagged” notes. Instead of manually writing messages and juggling calendars, Martine quickly reviews the system’s safe outreach drafts and approves them in bulk. Patients who need bookings are automatically scheduled into the practice's agenda, with conflict checks and reminders handled by the engine.
-
-Martine now spends more time with her patients and less on administration, while her GP and the practice manager enjoy complete audit trails and configuration flexibility. With NHG defaults baked in and no risk of system error thanks to strong controls and safety nets, the team confidently meets KPIs, increases patient safety, and demonstrates compliance—crucial both for their practice and growing insurer interest in performance-based care.
