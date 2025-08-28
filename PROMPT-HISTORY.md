@@ -34,3 +34,6 @@ Continue with the milestones
 
 ### Prompt 11
 Continue with Milestone 5
+
+### Prompt 12
+Please continue the conversation from where we left it off without asking the user any further questions. Continue with the last task that you were asked to work on.
