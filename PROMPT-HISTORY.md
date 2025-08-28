@@ -28,3 +28,6 @@ Add a language toggle to the TopBar
 
 ### Prompt 9
 Go over all texts and ensure that they have translations.
+
+### Prompt 10
+Continue with the milestones

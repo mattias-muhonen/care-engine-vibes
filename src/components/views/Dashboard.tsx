@@ -9,10 +9,12 @@ import { initializeAuditLog, logUserAction } from '../../utils/storage'
 import Tile from '../atoms/Tile'
 import CohortTable from '../organisms/CohortTable'
 import CohortDetailPanel from '../organisms/CohortDetailPanel'
+import PatientDetailPanel from '../organisms/PatientDetailPanel'
 
 function Dashboard() {
   const intl = useIntl()
   const [selectedCohort, setSelectedCohort] = useState<Cohort | null>(null)
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
   
   const patients = patientsData as Patient[]
   const cohorts = cohortsData as Cohort[]
@@ -37,17 +39,22 @@ function Dashboard() {
   const handleSelectPatient = (patientId: string) => {
     const patient = patients.find(p => p.id === patientId)
     if (patient) {
+      setSelectedPatient(patient)
+      setSelectedCohort(null) // Close cohort panel when opening patient panel
       logUserAction('patient_selected', {
         patientId: patient.id,
         patientName: patient.name,
         riskLevel: patient.riskLevel
       })
-      // TODO: Open patient detail view when implemented
     }
   }
 
   const handleCloseCohort = () => {
     setSelectedCohort(null)
+  }
+
+  const handleClosePatient = () => {
+    setSelectedPatient(null)
   }
 
   // Calculate dashboard metrics
@@ -115,6 +122,14 @@ function Dashboard() {
           patients={patients}
           onClose={handleCloseCohort}
           onSelectPatient={handleSelectPatient}
+        />
+      )}
+
+      {/* Patient Detail Panel */}
+      {selectedPatient && (
+        <PatientDetailPanel
+          patient={selectedPatient}
+          onClose={handleClosePatient}
         />
       )}
     </div>
