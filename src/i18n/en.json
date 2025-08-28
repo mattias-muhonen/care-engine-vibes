@@ -162,5 +162,22 @@
   "audit.details.to": "To",
   "audit.details.patient": "Patient",
   "audit.details.reason": "Reason",
-  "audit.details.priority": "Priority"
+  "audit.details.priority": "Priority",
+  "cohort.C001.name": "HbA1c above 70 mmol/mol",
+  "cohort.C001.reason": "HbA1c values above NHG guideline target value for type 2 diabetes",
+  "cohort.C002.name": "Overdue check-up > 6 months",
+  "cohort.C002.reason": "Patients who have not had a diabetes check-up for more than 6 months",
+  "cohort.C003.name": "Elevated blood pressure + diabetes",
+  "cohort.C003.reason": "Diabetes patients with elevated blood pressure above 140 mmHg systolic",
+  "cohort.C004.name": "Consent withdrawn",
+  "cohort.C004.reason": "Patients who have withdrawn consent for automated care",
+  "cohort.C005.name": "Good diabetes control",
+  "cohort.C005.reason": "Diabetes patients with HbA1c within target range",
+  "riskLevel.low": "Low",
+  "riskLevel.medium": "Medium",
+  "riskLevel.high": "High",
+  "riskLevel.critical": "Critical",
+  "priority.high": "High",
+  "priority.medium": "Medium",
+  "priority.low": "Low"
 }

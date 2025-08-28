@@ -162,5 +162,22 @@
   "audit.details.to": "Naar",
   "audit.details.patient": "Patiënt",
   "audit.details.reason": "Reden",
-  "audit.details.priority": "Prioriteit"
+  "audit.details.priority": "Prioriteit",
+  "cohort.C001.name": "HbA1c boven 70 mmol/mol",
+  "cohort.C001.reason": "HbA1c waarden boven NHG richtlijn streefwaarde voor diabetes type 2",
+  "cohort.C002.name": "Controle achterstallig > 6 maanden",
+  "cohort.C002.reason": "Patiënten die langer dan 6 maanden geen diabetes controle hebben gehad",
+  "cohort.C003.name": "Verhoogde bloeddruk + diabetes",
+  "cohort.C003.reason": "Diabetespatiënten met verhoogde bloeddruk boven 140 mmHg systolisch",
+  "cohort.C004.name": "Toestemming ingetrokken",
+  "cohort.C004.reason": "Patiënten die toestemming voor geautomatiseerde zorg hebben ingetrokken",
+  "cohort.C005.name": "Goede diabetesregulatie",
+  "cohort.C005.reason": "Diabetespatiënten met HbA1c binnen streefwaarde",
+  "riskLevel.low": "Laag",
+  "riskLevel.medium": "Gemiddeld",
+  "riskLevel.high": "Hoog",
+  "riskLevel.critical": "Kritiek",
+  "priority.high": "Hoog",
+  "priority.medium": "Gemiddeld",
+  "priority.low": "Laag"
 }

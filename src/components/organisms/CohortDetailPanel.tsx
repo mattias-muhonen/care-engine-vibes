@@ -87,18 +87,22 @@ function CohortDetailPanel({ cohort, patients, onClose, onSelectPatient }: Cohor
         {/* Cohort Info */}
         <div className="space-y-4">
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">{cohort.name}</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <FormattedMessage id={`cohort.${cohort.cohortId}.name`} defaultMessage={cohort.name} />
+            </h3>
             <Badge variant={getPriorityVariant(cohort.priority)} className="mb-3">
-              {cohort.priority} <FormattedMessage id="cohortDetail.priorityLabel" />
+              <FormattedMessage id={`priority.${cohort.priority}`} defaultMessage={cohort.priority} /> <FormattedMessage id="cohortDetail.priorityLabel" />
             </Badge>
-            <p className="text-sm text-gray-600">{cohort.reason}</p>
+            <p className="text-sm text-gray-600">
+              <FormattedMessage id={`cohort.${cohort.cohortId}.reason`} defaultMessage={cohort.reason} />
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gray-50 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <Users className="w-4 h-4 text-gray-500" />
-                <span className="text-xs font-medium text-gray-500 uppercase">Patiënten</span>
+                <span className="text-xs font-medium text-gray-500 uppercase"><FormattedMessage id="cohortDetail.stats.patients" /></span>
               </div>
               <p className="text-lg font-semibold text-gray-900">{cohortPatients.length}</p>
             </div>
@@ -106,7 +110,7 @@ function CohortDetailPanel({ cohort, patients, onClose, onSelectPatient }: Cohor
             <div className="bg-gray-50 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <Calendar className="w-4 h-4 text-gray-500" />
-                <span className="text-xs font-medium text-gray-500 uppercase">Bijgewerkt</span>
+                <span className="text-xs font-medium text-gray-500 uppercase"><FormattedMessage id="cohortDetail.stats.updated" /></span>
               </div>
               <p className="text-sm font-medium text-gray-900">
                 {formatDateRelative(cohort.lastUpdated)}
@@ -118,28 +122,28 @@ function CohortDetailPanel({ cohort, patients, onClose, onSelectPatient }: Cohor
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-medium text-blue-900">Filter criteria</span>
+              <span className="text-sm font-medium text-blue-900"><FormattedMessage id="cohortDetail.filterCriteria" /></span>
             </div>
             <p className="text-sm text-blue-700">
-              <strong>Conditie:</strong> {cohort.filter.condition === 'diabetes_t2' ? 'Diabetes Type 2' : cohort.filter.condition}
+              <strong><FormattedMessage id="cohortDetail.filterCondition" /></strong> {cohort.filter.condition === 'diabetes_t2' ? <FormattedMessage id="cohorts.conditions.diabetes_t2" /> : cohort.filter.condition}
             </p>
             <p className="text-sm text-blue-700">
-              <strong>Criteria:</strong> {cohort.filter.criteria}
+              <strong><FormattedMessage id="cohortDetail.filterCriteriaLabel" /></strong> {cohort.filter.criteria}
             </p>
           </div>
         </div>
 
         {/* Risk & Consent Stats */}
         <div className="space-y-4">
-          <h4 className="text-md font-medium text-gray-900">Overzicht</h4>
+          <h4 className="text-md font-medium text-gray-900"><FormattedMessage id="cohortDetail.overview.title" /></h4>
           
           <div>
-            <h5 className="text-sm font-medium text-gray-700 mb-2">Risico verdeling</h5>
+            <h5 className="text-sm font-medium text-gray-700 mb-2"><FormattedMessage id="cohortDetail.riskDistribution" /></h5>
             <div className="grid grid-cols-2 gap-2">
               {Object.entries(riskStats).map(([risk, count]) => (
                 <div key={risk} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded">
                   <Badge variant={getRiskBadgeVariant(risk)} size="sm">
-                    {risk}
+                    <FormattedMessage id={`riskLevel.${risk}`} defaultMessage={risk} />
                   </Badge>
                   <span className="text-sm font-medium text-gray-900">{count}</span>
                 </div>
@@ -148,12 +152,12 @@ function CohortDetailPanel({ cohort, patients, onClose, onSelectPatient }: Cohor
           </div>
 
           <div>
-            <h5 className="text-sm font-medium text-gray-700 mb-2">Toestemming status</h5>
+            <h5 className="text-sm font-medium text-gray-700 mb-2"><FormattedMessage id="cohortDetail.consentStatus" /></h5>
             <div className="space-y-2">
               {Object.entries(consentStats).map(([status, count]) => (
                 <div key={status} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded">
                   <Badge variant={status === 'given' ? 'success' : 'critical'} size="sm">
-                    {status === 'given' ? 'Gegeven' : 'Ingetrokken'}
+                    {status === 'given' ? <FormattedMessage id="cohortDetail.consent.given" /> : <FormattedMessage id="cohortDetail.consent.withdrawn" />}
                   </Badge>
                   <span className="text-sm font-medium text-gray-900">{count}</span>
                 </div>
@@ -165,13 +169,13 @@ function CohortDetailPanel({ cohort, patients, onClose, onSelectPatient }: Cohor
         {/* Patient List */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="text-md font-medium text-gray-900">Patiënten in cohort</h4>
+            <h4 className="text-md font-medium text-gray-900"><FormattedMessage id="cohortDetail.patientsInCohort" /></h4>
             <Button
               variant="outline"
               size="sm"
               onClick={handleSelectAll}
             >
-              {selectedPatients.length === cohortPatients.length ? 'Deselecteer alle' : 'Selecteer alle'}
+              {selectedPatients.length === cohortPatients.length ? <FormattedMessage id="cohortDetail.deselectAll" /> : <FormattedMessage id="cohortDetail.selectAll" />}
             </Button>
           </div>
 
@@ -193,24 +197,24 @@ function CohortDetailPanel({ cohort, patients, onClose, onSelectPatient }: Cohor
                       <div className="flex items-center gap-2 mb-1">
                         <h5 className="text-sm font-medium text-gray-900">{patient.name}</h5>
                         <Badge variant={getRiskBadgeVariant(patient.riskLevel)} size="sm">
-                          {patient.riskLevel}
+                          <FormattedMessage id={`riskLevel.${patient.riskLevel}`} defaultMessage={patient.riskLevel} />
                         </Badge>
                       </div>
                       <p className="text-xs text-gray-500 mb-2">
-                        {calculateAge(patient.dob)} jaar • ID: {patient.id}
+                        {calculateAge(patient.dob)} <FormattedMessage id="patient.age" /> • ID: {patient.id}
                       </p>
                       
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                          <span className="text-gray-500">HbA1c:</span>{' '}
+                          <span className="text-gray-500"><FormattedMessage id="cohortDetail.vitals.hba1c" /></span>{' '}
                           <span className={`font-medium ${
                             latestHbA1c && latestHbA1c > 70 ? 'text-red-600' : 'text-green-600'
                           }`}>
-                            {latestHbA1c ? `${latestHbA1c} mmol/mol` : 'Geen data'}
+                            {latestHbA1c ? `${latestHbA1c} <FormattedMessage id="cohortDetail.vitals.units" />` : <FormattedMessage id="cohortDetail.vitals.noData" />}
                           </span>
                         </div>
                         <div>
-                          <span className="text-gray-500">Laatste contact:</span>{' '}
+                          <span className="text-gray-500"><FormattedMessage id="cohortDetail.vitals.lastContact" /></span>{' '}
                           <span className="font-medium text-gray-900">
                             {formatDateRelative(patient.lastContact)}
                           </span>
@@ -239,10 +243,10 @@ function CohortDetailPanel({ cohort, patients, onClose, onSelectPatient }: Cohor
           <div className="sticky bottom-0 bg-white border-t border-gray-200 pt-4 -mx-6 px-6">
             <div className="flex items-center gap-2">
               <Button variant="primary">
-                Bulkactie ({selectedPatients.length} geselecteerd)
+                <FormattedMessage id="cohortDetail.bulkAction" values={{ count: selectedPatients.length }} />
               </Button>
               <Button variant="outline" onClick={() => setSelectedPatients([])}>
-                Annuleren
+                <FormattedMessage id="cohortDetail.cancel" />
               </Button>
             </div>
           </div>

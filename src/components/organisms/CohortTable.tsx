@@ -216,16 +216,16 @@ function CohortTable({ cohorts, onOpenCohort }: CohortTableProps) {
                 <td className="px-6 py-4">
                   <div>
                     <div className="text-sm font-medium text-gray-900">
-                      {cohort.name}
+                      <FormattedMessage id={`cohort.${cohort.cohortId}.name`} defaultMessage={cohort.name} />
                     </div>
                     <div className="text-sm text-gray-500 truncate max-w-xs">
-                      {cohort.reason}
+                      <FormattedMessage id={`cohort.${cohort.cohortId}.reason`} defaultMessage={cohort.reason} />
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <Badge variant={getPriorityVariant(cohort.priority)}>
-                    {cohort.priority}
+                    <FormattedMessage id={`priority.${cohort.priority}`} defaultMessage={cohort.priority} />
                   </Badge>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
