@@ -11,5 +11,11 @@
   "config.title": "Configuratie",
   "config.placeholder": "Configuratie-instellingen worden geladen...",
   "audit.title": "Audit Log",
-  "audit.placeholder": "Audit log wordt geladen..."
+  "audit.placeholder": "Audit log wordt geladen...",
+  "dashboard.cohorts.title": "Patient Cohorten",
+  "dashboard.tiles.totalPatients": "Totaal patiënten",
+  "dashboard.tiles.activeCohorts": "Actieve cohorten", 
+  "dashboard.tiles.highRiskPatients": "Hoog risico patiënten",
+  "dashboard.tiles.overdueReviews": "Achterstallige controles",
+  "dashboard.tiles.pendingActions": "Acties in wachtrij"
 }

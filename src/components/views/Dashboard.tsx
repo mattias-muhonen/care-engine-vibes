@@ -1,23 +1,60 @@
+import { useState } from 'react'
 import { FormattedMessage } from 'react-intl'
+import { Users, AlertTriangle, Clock, CheckCircle, Activity } from 'lucide-react'
 import patientsData from '../../mocks/patients.json'
 import cohortsData from '../../mocks/cohorts.json'
 import { Patient, Cohort } from '../../utils/patientFilters'
-import { formatDate, calculateAge } from '../../utils/formatDate'
-import Badge from '../atoms/Badge'
+import { isOverdue } from '../../utils/formatDate'
+import { initializeAuditLog, logUserAction } from '../../utils/storage'
+import Tile from '../atoms/Tile'
+import CohortTable from '../organisms/CohortTable'
+import CohortDetailPanel from '../organisms/CohortDetailPanel'
 
 function Dashboard() {
+  const [selectedCohort, setSelectedCohort] = useState<Cohort | null>(null)
+  
   const patients = patientsData as Patient[]
   const cohorts = cohortsData as Cohort[]
 
-  const getRiskBadgeVariant = (riskLevel: string) => {
-    switch (riskLevel) {
-      case 'critical': return 'critical'
-      case 'high': return 'warning' 
-      case 'medium': return 'default'
-      case 'low': return 'success'
-      default: return 'default'
+  // Initialize audit log on first load
+  useState(() => {
+    initializeAuditLog()
+  })
+
+  const handleOpenCohort = (cohortId: string) => {
+    const cohort = cohorts.find(c => c.cohortId === cohortId)
+    if (cohort) {
+      setSelectedCohort(cohort)
+      logUserAction('cohort_opened', {
+        cohortId: cohort.cohortId,
+        cohortName: cohort.name,
+        patientCount: cohort.patientIds.length
+      })
     }
   }
+
+  const handleSelectPatient = (patientId: string) => {
+    const patient = patients.find(p => p.id === patientId)
+    if (patient) {
+      logUserAction('patient_selected', {
+        patientId: patient.id,
+        patientName: patient.name,
+        riskLevel: patient.riskLevel
+      })
+      // TODO: Open patient detail view when implemented
+    }
+  }
+
+  const handleCloseCohort = () => {
+    setSelectedCohort(null)
+  }
+
+  // Calculate dashboard metrics
+  const highRiskPatients = patients.filter(p => p.riskLevel === 'critical' || p.riskLevel === 'high').length
+  const overdueReviews = patients.filter(p => isOverdue(p.lastContact, 6)).length
+  const pendingActions = cohorts.reduce((acc, cohort) => acc + cohort.patientIds.length, 0)
+  const totalPatients = patients.length
+  const activeCohorts = cohorts.length
 
   return (
     <div className="space-y-6">
@@ -26,80 +63,59 @@ function Dashboard() {
       </h1>
       
       {/* Summary tiles */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Totaal patiënten</h3>
-          <p className="text-3xl font-bold text-primary-600">{patients.length}</p>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <Tile
+          title="Totaal patiënten"
+          value={totalPatients}
+          icon={Users}
+          variant="default"
+        />
         
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Actieve cohorten</h3>
-          <p className="text-3xl font-bold text-primary-600">{cohorts.length}</p>
-        </div>
+        <Tile
+          title="Actieve cohorten"
+          value={activeCohorts}
+          icon={Activity}
+          variant="default"
+        />
         
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Hoog risico patiënten</h3>
-          <p className="text-3xl font-bold text-status-critical">
-            {patients.filter(p => p.riskLevel === 'critical' || p.riskLevel === 'high').length}
-          </p>
-        </div>
+        <Tile
+          title="Hoog risico"
+          value={highRiskPatients}
+          icon={AlertTriangle}
+          variant="critical"
+        />
+        
+        <Tile
+          title="Achterstallig"
+          value={overdueReviews}
+          icon={Clock}
+          variant="warning"
+        />
+        
+        <Tile
+          title="Acties in wachtrij"
+          value={pendingActions}
+          icon={CheckCircle}
+          variant="success"
+        />
       </div>
 
-      {/* Patient list sample */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-lg font-medium text-gray-900">Recent patiënten</h2>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Patiënt
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Leeftijd
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Laatste contact
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Risico niveau
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Toestemming
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {patients.slice(0, 5).map((patient) => (
-                <tr key={patient.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{patient.name}</div>
-                    <div className="text-sm text-gray-500">ID: {patient.id}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {calculateAge(patient.dob)} jaar
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {formatDate(patient.lastContact)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <Badge variant={getRiskBadgeVariant(patient.riskLevel)}>
-                      {patient.riskLevel}
-                    </Badge>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <Badge variant={patient.consent.status === 'given' ? 'success' : 'critical'}>
-                      {patient.consent.status === 'given' ? 'Gegeven' : 'Ingetrokken'}
-                    </Badge>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      {/* Cohort Table */}
+      <CohortTable
+        cohorts={cohorts}
+        patients={patients}
+        onOpenCohort={handleOpenCohort}
+      />
+
+      {/* Cohort Detail Panel */}
+      {selectedCohort && (
+        <CohortDetailPanel
+          cohort={selectedCohort}
+          patients={patients}
+          onClose={handleCloseCohort}
+          onSelectPatient={handleSelectPatient}
+        />
+      )}
     </div>
   )
 }

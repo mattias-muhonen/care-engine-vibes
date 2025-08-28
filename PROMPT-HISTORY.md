@@ -19,3 +19,6 @@ Start implmenting the POC according to the milestones in the PLAN.
 
 ### Prompt 6
 Continue to Milestone 2
+
+### Prompt 7
+Continue with milestone 3

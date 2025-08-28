@@ -78,6 +78,9 @@ export function getLatestHbA1c(patient: Patient): number | null {
   return sortedVitals[0].hba1c
 }
 
+// Export getLatestHbA1c from here for convenience
+export { getLatestHbA1c as getLatestHbA1cFromUtils }
+
 export function getLatestBP(patient: Patient): string | null {
   if (!patient.vitals || patient.vitals.length === 0) {
     return null
