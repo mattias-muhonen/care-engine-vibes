@@ -231,7 +231,7 @@ function MassActions() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Gebruik {'{patientName}'} voor personalisatie
+                    <FormattedMessage id="massActions.template.personalization" values={{ patientName: '{patientName}' }} />
                   </p>
                 </div>
 
@@ -256,7 +256,9 @@ function MassActions() {
                               <span className="text-sm font-medium text-gray-900">
                                 {formatDate(slot.date)} - {slot.time}
                               </span>
-                              <Badge variant="success">Beschikbaar</Badge>
+                              <Badge variant="success">
+                                <FormattedMessage id="massActions.appointmentSlots.available" />
+                              </Badge>
                             </div>
                           </div>
                         </label>
@@ -272,7 +274,7 @@ function MassActions() {
                 </h3>
                 <div className="bg-white border border-gray-200 rounded p-3">
                   <p className="text-sm text-gray-700">
-                    {message.replace('{patientName}', 'Jan de Vries')}
+                    {message.replace('{patientName}', intl.formatMessage({ id: 'massActions.preview.samplePatient' }))}
                   </p>
                 </div>
               </div>
@@ -319,12 +321,16 @@ function MassActions() {
                       </dd>
                     </div>
                     <div className="flex justify-between">
-                      <dt className="text-blue-700">Aantal patiënten:</dt>
+                      <dt className="text-blue-700">
+                        <FormattedMessage id="massActions.summary.patientCount" />
+                      </dt>
                       <dd className="text-blue-900 font-medium">{affectedPatients.length}</dd>
                     </div>
                     {selectedSlot && (
                       <div className="flex justify-between">
-                        <dt className="text-blue-700">Tijdslot:</dt>
+                        <dt className="text-blue-700">
+                          <FormattedMessage id="massActions.summary.timeSlot" />
+                        </dt>
                         <dd className="text-blue-900 font-medium">
                           {appointmentSlots.find(s => s.id === selectedSlot)?.date} - {appointmentSlots.find(s => s.id === selectedSlot)?.time}
                         </dd>
@@ -334,13 +340,15 @@ function MassActions() {
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-medium text-gray-900 mb-3">Betreft volgende patiënten:</h3>
+                  <h3 className="text-sm font-medium text-gray-900 mb-3">
+                    <FormattedMessage id="massActions.preview.affectedPatientsTitle" />
+                  </h3>
                   <div className="space-y-2 max-h-48 overflow-y-auto">
                     {affectedPatients.map(patient => (
                       <div key={patient.id} className="flex items-center justify-between p-2 bg-white border border-gray-200 rounded">
                         <span className="text-sm text-gray-900">{patient.name}</span>
                         <Badge variant={patient.riskLevel === 'critical' ? 'critical' : patient.riskLevel === 'high' ? 'warning' : 'default'}>
-                          {patient.riskLevel}
+                          <FormattedMessage id={`riskLevel.${patient.riskLevel}`} defaultMessage={patient.riskLevel} />
                         </Badge>
                       </div>
                     ))}
@@ -355,7 +363,7 @@ function MassActions() {
                   </h3>
                   <div className="bg-white border border-gray-200 rounded-lg p-4">
                     <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                      {message.replace('{patientName}', '[Patiënt naam]')}
+                      {message.replace('{patientName}', intl.formatMessage({ id: 'massActions.preview.patientPlaceholder' }))}
                     </p>
                   </div>
                 </div>
@@ -403,7 +411,7 @@ function MassActions() {
                   (currentStep === 'configureAction' && (!message || (actionType === 'appointment' && !selectedSlot)))
                 }
               >
-                Volgende stap
+                <FormattedMessage id="massActions.actions.nextStep" />
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             ) : (

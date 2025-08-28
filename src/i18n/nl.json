@@ -182,5 +182,14 @@
   "priority.low": "Laag",
   "massActions.summary.title": "Samenvatting actie",
   "massActions.summary.cohort": "Cohort:",
-  "massActions.summary.actionType": "Actie type:"
+  "massActions.summary.actionType": "Actie type:",
+  "massActions.template.personalization": "Gebruik {patientName} voor personalisatie",
+  "massActions.appointmentSlots.available": "Beschikbaar",
+  "massActions.preview.samplePatient": "Jan de Vries",
+  "massActions.summary.patientCount": "Aantal patiënten:",
+  "massActions.summary.timeSlot": "Tijdslot:",
+  "massActions.preview.affectedPatientsTitle": "Betreft volgende patiënten:",
+  "massActions.preview.patientPlaceholder": "[Patiënt naam]",
+  "massActions.actions.nextStep": "Volgende stap",
+  "massActions.actions.back": "Terug"
 }

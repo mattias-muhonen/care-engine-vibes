@@ -49,3 +49,6 @@ You have not beend adding my prompts to PROMPT-HISTORY.md. Check what is missing
 
 ### Prompt 16
 Choose a patient cohort dropdown is missing translations
+
+### Prompt 17
+Check all strings in Mass Actions and make sure they are translated.

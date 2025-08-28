@@ -182,5 +182,14 @@
   "priority.low": "Low",
   "massActions.summary.title": "Action Summary",
   "massActions.summary.cohort": "Cohort:",
-  "massActions.summary.actionType": "Action Type:"
+  "massActions.summary.actionType": "Action Type:",
+  "massActions.template.personalization": "Use {patientName} for personalization",
+  "massActions.appointmentSlots.available": "Available",
+  "massActions.preview.samplePatient": "John Smith",
+  "massActions.summary.patientCount": "Number of patients:",
+  "massActions.summary.timeSlot": "Time slot:",
+  "massActions.preview.affectedPatientsTitle": "Affects the following patients:",
+  "massActions.preview.patientPlaceholder": "[Patient name]",
+  "massActions.actions.nextStep": "Next step",
+  "massActions.actions.back": "Back"
 }
