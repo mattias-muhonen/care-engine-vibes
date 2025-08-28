@@ -1,0 +1,15 @@
+{
+  "app.title": "Care Automation",
+  "nav.dashboard": "Dashboard",
+  "nav.massActions": "Mass Actions",
+  "nav.config": "Configuration",
+  "nav.audit": "Audit",
+  "dashboard.title": "Dashboard",
+  "dashboard.placeholder": "Loading dashboard...",
+  "massActions.title": "Mass Actions",
+  "massActions.placeholder": "Loading mass actions interface...",
+  "config.title": "Configuration",
+  "config.placeholder": "Loading configuration settings...",
+  "audit.title": "Audit Log",
+  "audit.placeholder": "Loading audit log..."
+}

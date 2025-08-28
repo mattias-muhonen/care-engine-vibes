@@ -1,0 +1,15 @@
+{
+  "app.title": "Zorgautomatisering",
+  "nav.dashboard": "Dashboard",
+  "nav.massActions": "Bulkacties",
+  "nav.config": "Configuratie",
+  "nav.audit": "Audit",
+  "dashboard.title": "Dashboard",
+  "dashboard.placeholder": "Dashboard wordt geladen...",
+  "massActions.title": "Bulkacties",
+  "massActions.placeholder": "Bulkacties interface wordt geladen...",
+  "config.title": "Configuratie",
+  "config.placeholder": "Configuratie-instellingen worden geladen...",
+  "audit.title": "Audit Log",
+  "audit.placeholder": "Audit log wordt geladen..."
+}
