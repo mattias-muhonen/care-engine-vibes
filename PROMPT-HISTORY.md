@@ -55,3 +55,6 @@ Check all strings in Mass Actions and make sure they are translated.
 
 ### Prompt 18
 cohorts.json is not translated
+
+### Prompt 19
+You are simply wrong. Now cohorts.json has only english texts. Add both locales to the json and use the selected locale in the UI.

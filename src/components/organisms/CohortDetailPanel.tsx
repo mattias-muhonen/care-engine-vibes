@@ -3,6 +3,7 @@ import { FormattedMessage } from 'react-intl'
 import { X, Users, Calendar, TrendingUp, Eye } from 'lucide-react'
 import { Cohort, Patient, getPatientsByIds, getLatestHbA1c } from '../../utils/patientFilters'
 import { formatDateRelative, calculateAge } from '../../utils/formatDate'
+import { useLocale } from '../../contexts/LocaleContext'
 import Badge from '../atoms/Badge'
 import Button from '../atoms/Button'
 
@@ -14,6 +15,7 @@ interface CohortDetailPanelProps {
 }
 
 function CohortDetailPanel({ cohort, patients, onClose, onSelectPatient }: CohortDetailPanelProps) {
+  const { locale } = useLocale()
   const [selectedPatients, setSelectedPatients] = useState<string[]>([])
 
   if (!cohort) return null
@@ -88,13 +90,13 @@ function CohortDetailPanel({ cohort, patients, onClose, onSelectPatient }: Cohor
         <div className="space-y-4">
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              <FormattedMessage id={`cohort.${cohort.cohortId}.name`} defaultMessage={cohort.name} />
+              {cohort.name[locale]}
             </h3>
             <Badge variant={getPriorityVariant(cohort.priority)} className="mb-3">
               <FormattedMessage id={`priority.${cohort.priority}`} defaultMessage={cohort.priority} /> <FormattedMessage id="cohortDetail.priorityLabel" />
             </Badge>
             <p className="text-sm text-gray-600">
-              <FormattedMessage id={`cohort.${cohort.cohortId}.reason`} defaultMessage={cohort.reason} />
+              {cohort.reason[locale]}
             </p>
           </div>
 

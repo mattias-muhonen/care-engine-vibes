@@ -5,6 +5,7 @@ import patientsData from '../../mocks/patients.json'
 import cohortsData from '../../mocks/cohorts.json'
 import { Patient, Cohort, getPatientsByIds } from '../../utils/patientFilters'
 import { formatDate } from '../../utils/formatDate'
+import { useLocale } from '../../contexts/LocaleContext'
 import { logUserAction } from '../../utils/storage'
 import Button from '../atoms/Button'
 import TranslatableSelect from '../atoms/TranslatableSelect'
@@ -23,6 +24,7 @@ interface AppointmentSlot {
 
 function MassActions() {
   const intl = useIntl()
+  const { locale } = useLocale()
   const [currentStep, setCurrentStep] = useState<Step>('selectCohort')
   const [selectedCohort, setSelectedCohort] = useState<string>('')
   const [actionType, setActionType] = useState<ActionType>('outreach')
@@ -99,7 +101,7 @@ function MassActions() {
     // Log the mass action
     logUserAction('mass_action_executed', {
       cohortId: cohort.cohortId,
-      cohortName: cohort.name,
+      cohortName: cohort.name[locale],
       actionType,
       affectedPatients: affectedPatients.length,
       message: message.substring(0, 100),
@@ -166,7 +168,7 @@ function MassActions() {
                   </option>
                   {cohorts.map(cohort => (
                     <option key={cohort.cohortId} value={cohort.cohortId}>
-                      {intl.formatMessage({ id: `cohort.${cohort.cohortId}.name` }, { default: cohort.name })}
+                      {cohort.name[locale]}
                     </option>
                   ))}
                 </select>
@@ -175,10 +177,10 @@ function MassActions() {
               {selectedCohort && (
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h3 className="text-sm font-medium text-gray-900 mb-2">
-                    {getSelectedCohort() && intl.formatMessage({ id: `cohort.${getSelectedCohort()!.cohortId}.name` }, { default: getSelectedCohort()!.name })}
+                    {getSelectedCohort()?.name[locale]}
                   </h3>
                   <p className="text-sm text-gray-600 mb-3">
-                    {getSelectedCohort()?.reason}
+                    {getSelectedCohort()?.reason[locale]}
                   </p>
                   <div className="flex items-center gap-2">
                     <Users className="w-4 h-4 text-gray-500" />
@@ -309,7 +311,7 @@ function MassActions() {
                         <FormattedMessage id="massActions.summary.cohort" />
                       </dt>
                       <dd className="text-blue-900 font-medium">
-                        {cohort && intl.formatMessage({ id: `cohort.${cohort.cohortId}.name` }, { default: cohort.name })}
+                        {cohort?.name[locale]}
                       </dd>
                     </div>
                     <div className="flex justify-between">

@@ -29,13 +29,19 @@ export interface Patient {
 
 export interface Cohort {
   cohortId: string
-  name: string
+  name: {
+    nl: string
+    en: string
+  }
   filter: {
     condition: string
     criteria: string
   }
   patientIds: string[]
-  reason: string
+  reason: {
+    nl: string
+    en: string
+  }
   priority: 'low' | 'medium' | 'high'
   createdDate: string
   lastUpdated: string

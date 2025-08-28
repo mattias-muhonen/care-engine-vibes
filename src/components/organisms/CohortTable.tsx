@@ -3,6 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { ArrowUpDown, Users, AlertTriangle, Clock, Filter } from 'lucide-react'
 import { Cohort, Patient } from '../../utils/patientFilters'
 import { formatDate } from '../../utils/formatDate'
+import { useLocale } from '../../contexts/LocaleContext'
 import Badge from '../atoms/Badge'
 import Button from '../atoms/Button'
 import Input from '../atoms/Input'
@@ -19,6 +20,7 @@ type SortDirection = 'asc' | 'desc'
 
 function CohortTable({ cohorts, onOpenCohort }: CohortTableProps) {
   const intl = useIntl()
+  const { locale } = useLocale()
   const [sortField, setSortField] = useState<SortField>('priority')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
   const [searchTerm, setSearchTerm] = useState('')
@@ -56,8 +58,8 @@ function CohortTable({ cohorts, onOpenCohort }: CohortTableProps) {
   const filteredCohorts = cohorts
     .filter(cohort => {
       const matchesSearch = !searchTerm || 
-        cohort.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cohort.reason.toLowerCase().includes(searchTerm.toLowerCase())
+        cohort.name[locale].toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cohort.reason[locale].toLowerCase().includes(searchTerm.toLowerCase())
       
       const matchesCondition = !filterCondition || 
         cohort.filter.condition === filterCondition
@@ -73,8 +75,8 @@ function CohortTable({ cohorts, onOpenCohort }: CohortTableProps) {
 
       switch (sortField) {
         case 'name':
-          aValue = a.name
-          bValue = b.name
+          aValue = a.name[locale]
+          bValue = b.name[locale]
           break
         case 'priority':
           aValue = getPriorityOrder(a.priority)
@@ -216,10 +218,10 @@ function CohortTable({ cohorts, onOpenCohort }: CohortTableProps) {
                 <td className="px-6 py-4">
                   <div>
                     <div className="text-sm font-medium text-gray-900">
-                      <FormattedMessage id={`cohort.${cohort.cohortId}.name`} defaultMessage={cohort.name} />
+                      {cohort.name[locale]}
                     </div>
                     <div className="text-sm text-gray-500 truncate max-w-xs">
-                      <FormattedMessage id={`cohort.${cohort.cohortId}.reason`} defaultMessage={cohort.reason} />
+                      {cohort.reason[locale]}
                     </div>
                   </div>
                 </td>
