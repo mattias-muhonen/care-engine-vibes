@@ -1,0 +1,177 @@
+[
+  {
+    "id": "P001",
+    "name": "Jan de Vries",
+    "dob": "1965-03-15",
+    "nhsNumber": "123456789",
+    "consent": {
+      "status": "given",
+      "date": "2024-01-15"
+    },
+    "vitals": [
+      {
+        "date": "2024-08-01",
+        "hba1c": 72,
+        "bp": "145/85",
+        "weight": 85.2
+      },
+      {
+        "date": "2024-05-15",
+        "hba1c": 68,
+        "bp": "140/82",
+        "weight": 86.1
+      },
+      {
+        "date": "2024-02-10",
+        "hba1c": 75,
+        "bp": "150/88",
+        "weight": 87.0
+      }
+    ],
+    "notes": [
+      {
+        "date": "2024-08-01",
+        "author": "Dr. van der Berg",
+        "content": "HbA1c nog steeds boven streefwaarde. Medicatie bijstellen overwegen."
+      },
+      {
+        "date": "2024-05-15",
+        "author": "Martine (POH-S)",
+        "content": "Patiënt rapporteert moeite met dieetadvies. Doorverwijzing diëtist geregeld."
+      }
+    ],
+    "pathwayStatus": "active",
+    "lastContact": "2024-08-01",
+    "riskLevel": "high"
+  },
+  {
+    "id": "P002", 
+    "name": "Maria Jansen",
+    "dob": "1972-11-22",
+    "nhsNumber": "987654321",
+    "consent": {
+      "status": "given",
+      "date": "2024-02-01"
+    },
+    "vitals": [
+      {
+        "date": "2024-07-20",
+        "hba1c": 58,
+        "bp": "130/78",
+        "weight": 72.5
+      },
+      {
+        "date": "2024-04-18",
+        "hba1c": 61,
+        "bp": "135/80",
+        "weight": 73.2
+      }
+    ],
+    "notes": [
+      {
+        "date": "2024-07-20",
+        "author": "Martine (POH-S)",
+        "content": "Goede vooruitgang. HbA1c binnen streefwaarde."
+      }
+    ],
+    "pathwayStatus": "monitoring",
+    "lastContact": "2024-07-20",
+    "riskLevel": "medium"
+  },
+  {
+    "id": "P003",
+    "name": "Piet Bakker", 
+    "dob": "1958-07-08",
+    "nhsNumber": "456789123",
+    "consent": {
+      "status": "withdrawn",
+      "date": "2024-06-01"
+    },
+    "vitals": [
+      {
+        "date": "2024-06-01",
+        "hba1c": 82,
+        "bp": "160/95",
+        "weight": 92.8
+      },
+      {
+        "date": "2024-03-15",
+        "hba1c": 78,
+        "bp": "155/90",
+        "weight": 93.5
+      }
+    ],
+    "notes": [
+      {
+        "date": "2024-06-01", 
+        "author": "Dr. van der Berg",
+        "content": "Patiënt heeft toestemming ingetrokken voor geautomatiseerde zorg."
+      }
+    ],
+    "pathwayStatus": "paused",
+    "lastContact": "2024-06-01",
+    "riskLevel": "critical"
+  },
+  {
+    "id": "P004",
+    "name": "Anna van Dijk",
+    "dob": "1969-12-03",
+    "nhsNumber": "789123456",
+    "consent": {
+      "status": "given",
+      "date": "2024-01-10"
+    },
+    "vitals": [
+      {
+        "date": "2024-08-15", 
+        "hba1c": 66,
+        "bp": "138/82",
+        "weight": 68.9
+      },
+      {
+        "date": "2024-05-22",
+        "hba1c": 69,
+        "bp": "142/84",
+        "weight": 69.8
+      }
+    ],
+    "notes": [
+      {
+        "date": "2024-08-15",
+        "author": "Martine (POH-S)",  
+        "content": "HbA1c lichte verbetering. Patiënt gemotiveerd voor leefstijladviezen."
+      }
+    ],
+    "pathwayStatus": "active",
+    "lastContact": "2024-08-15", 
+    "riskLevel": "medium"
+  },
+  {
+    "id": "P005",
+    "name": "Henk Smit",
+    "dob": "1963-09-17",
+    "nhsNumber": "321654987",
+    "consent": {
+      "status": "given",
+      "date": "2024-03-01"
+    },
+    "vitals": [
+      {
+        "date": "2024-04-10",
+        "hba1c": 89,
+        "bp": "165/100", 
+        "weight": 98.5
+      }
+    ],
+    "notes": [
+      {
+        "date": "2024-04-10",
+        "author": "Dr. van der Berg",
+        "content": "Zeer hoge HbA1c waarden. Spoedevaluatie nodig."
+      }
+    ],
+    "pathwayStatus": "urgent",
+    "lastContact": "2024-04-10",
+    "riskLevel": "critical"
+  }
+]

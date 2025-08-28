@@ -16,3 +16,6 @@ Start implmenting the POC according to the milestones in the PLAN.
 
 ### Prompt 5
 [Request interrupted by user for tool use]Just create the files in the root of this folder.
+
+### Prompt 6
+Continue to Milestone 2

@@ -1,0 +1,76 @@
+[
+  {
+    "id": "A001",
+    "timestamp": "2024-08-25T14:30:00Z",
+    "user": "Martine van der Berg (POH-S)",
+    "actionType": "cohort_reviewed",
+    "details": {
+      "cohortId": "C001",
+      "cohortName": "HbA1c boven 70 mmol/mol",
+      "patientsAffected": 3,
+      "action": "Cohort bekeken en patiënten geëvalueerd"
+    }
+  },
+  {
+    "id": "A002",
+    "timestamp": "2024-08-25T13:15:00Z", 
+    "user": "Martine van der Berg (POH-S)",
+    "actionType": "mass_action_approved",
+    "details": {
+      "cohortId": "C002",
+      "actionType": "outreach_sms",
+      "patientsAffected": 1,
+      "message": "Beste patiënt, het is tijd voor uw diabetes controle. Kunt u een afspraak inplannen?",
+      "status": "approved_and_sent"
+    }
+  },
+  {
+    "id": "A003",
+    "timestamp": "2024-08-25T11:45:00Z",
+    "user": "Dr. van der Berg",
+    "actionType": "patient_flagged",
+    "details": {
+      "patientId": "P005",
+      "patientName": "Henk Smit", 
+      "reason": "HbA1c 89 mmol/mol - spoedevaluatie vereist",
+      "priority": "critical"
+    }
+  },
+  {
+    "id": "A004",
+    "timestamp": "2024-08-24T16:20:00Z",
+    "user": "Martine van der Berg (POH-S)",
+    "actionType": "appointment_scheduled",
+    "details": {
+      "patientId": "P004",
+      "patientName": "Anna van Dijk",
+      "appointmentDate": "2024-09-05T10:00:00Z",
+      "appointmentType": "diabetes_follow_up",
+      "automatedBooking": true
+    }
+  },
+  {
+    "id": "A005", 
+    "timestamp": "2024-08-24T09:30:00Z",
+    "user": "System",
+    "actionType": "threshold_updated",
+    "details": {
+      "setting": "hba1c_threshold",
+      "oldValue": "69 mmol/mol",
+      "newValue": "70 mmol/mol", 
+      "updatedBy": "Dr. van der Berg"
+    }
+  },
+  {
+    "id": "A006",
+    "timestamp": "2024-08-23T15:10:00Z",
+    "user": "Martine van der Berg (POH-S)",
+    "actionType": "consent_withdrawn",
+    "details": {
+      "patientId": "P003",
+      "patientName": "Piet Bakker",
+      "reason": "Patiënt wil geen geautomatiseerde zorg meer ontvangen",
+      "effectiveDate": "2024-06-01"
+    }
+  }
+]
