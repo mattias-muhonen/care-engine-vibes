@@ -1,4 +1,5 @@
 import type { Patient, LabResult, PatientFlag, RiskLevel } from '@/types/patient'
+import type { ActionItem, BulkAction, MessageTemplateConfig, ActionType } from '@/types/actions'
 import type { User, SystemSettings } from '@/types/audit'
 
 // Helper function to generate random dates
@@ -290,3 +291,177 @@ export const mockSystemSettings: SystemSettings = {
 
 // Generate mock patients on load
 export const mockPatients = generateMockPatients(25)
+
+// Generate mock actions based on patients
+export const generateMockActions = (): ActionItem[] => {
+  const actions: ActionItem[] = []
+  
+  // Create actions for high-risk patients
+  const highRiskPatients = mockPatients.filter(p => p.riskLevel === 'high')
+  const mediumRiskPatients = mockPatients.filter(p => p.riskLevel === 'medium')
+  
+  // High-risk patients get multiple urgent actions
+  highRiskPatients.forEach((patient) => {
+    // SMS reminder for overdue HbA1c
+    actions.push({
+      id: `action_${actions.length + 1}`,
+      patientId: patient.id,
+      type: 'sms_reminder',
+      status: 'pending',
+      priority: 'high',
+      title: 'SMS herinnering: HbA1c controle',
+      description: `${patient.firstName} ${patient.lastName} - HbA1c controle ${Math.floor(Math.random() * 6 + 3)} maanden achterstallig`,
+      messageTemplate: 'hba1c_reminder',
+      createdBy: 'system',
+      createdAt: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000), // Within last 24 hours
+      estimatedDuration: 2,
+      cost: 0.05
+    })
+    
+    // Book appointment action
+    actions.push({
+      id: `action_${actions.length + 1}`,
+      patientId: patient.id,
+      type: 'book_appointment',
+      status: 'pending',
+      priority: 'high',
+      title: 'Afspraak inplannen: Diabetescontrole',
+      description: `Urgente controle nodig voor ${patient.firstName} ${patient.lastName} - HbA1c ${patient.labResults[0]?.hba1c || 70} mmol/mol`,
+      scheduledFor: new Date(Date.now() + Math.random() * 14 * 24 * 60 * 60 * 1000), // Next 2 weeks
+      createdBy: 'system',
+      createdAt: new Date(Date.now() - Math.random() * 12 * 60 * 60 * 1000), // Within last 12 hours
+      estimatedDuration: 30,
+      cost: 0
+    })
+  })
+  
+  // Medium-risk patients get routine actions
+  mediumRiskPatients.slice(0, 8).forEach((patient) => {
+    const actionTypes = ['email_reminder', 'phone_call', 'letter']
+    const randomType = actionTypes[Math.floor(Math.random() * actionTypes.length)]
+    
+    actions.push({
+      id: `action_${actions.length + 1}`,
+      patientId: patient.id,
+      type: randomType as ActionType,
+      status: Math.random() > 0.7 ? 'approved' : 'pending',
+      priority: 'medium',
+      title: `${randomType === 'email_reminder' ? 'E-mail herinnering' : randomType === 'phone_call' ? 'Telefonisch contact' : 'Brief versturen'}: Controle afspraak`,
+      description: `${patient.firstName} ${patient.lastName} - Routine diabetescontrole inplannen`,
+      messageTemplate: 'appointment_reminder',
+      scheduledFor: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000), // Next month
+      createdBy: 'system',
+      createdAt: new Date(Date.now() - Math.random() * 48 * 60 * 60 * 1000), // Within last 48 hours
+      estimatedDuration: randomType === 'phone_call' ? 5 : 2,
+      cost: randomType === 'letter' ? 0.80 : randomType === 'email_reminder' ? 0 : 0
+    })
+  })
+  
+  // Add some completed actions for demonstration
+  actions.slice(0, 3).forEach(action => {
+    if (Math.random() > 0.5) {
+      action.status = 'completed'
+      action.approvedBy = 'user_1'
+      action.approvedAt = new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000)
+      action.executedAt = new Date(action.approvedAt.getTime() + Math.random() * 60 * 60 * 1000)
+      action.executionResult = {
+        success: true,
+        message: 'Actie succesvol uitgevoerd',
+        details: { deliveryStatus: 'delivered', timestamp: action.executedAt }
+      }
+    }
+  })
+  
+  // Sort by priority and creation date
+  return actions.sort((a, b) => {
+    const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 }
+    if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+      return priorityOrder[b.priority] - priorityOrder[a.priority]
+    }
+    return b.createdAt.getTime() - a.createdAt.getTime()
+  })
+}
+
+// Generate mock bulk actions
+export const generateMockBulkActions = (): BulkAction[] => {
+  return [
+    {
+      id: 'bulk_1',
+      name: 'HbA1c herinneringen - Hoog risico patiënten',
+      description: 'SMS herinneringen voor alle hoog-risico patiënten met achterstallige HbA1c',
+      actionType: 'sms_reminder',
+      patientIds: mockPatients.filter(p => p.riskLevel === 'high').slice(0, 5).map(p => p.id),
+      template: 'hba1c_reminder',
+      createdBy: 'user_1',
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+      status: 'pending_approval',
+      individualActions: [],
+      summary: {
+        total: 5,
+        successful: 0,
+        failed: 0,
+        pending: 5
+      }
+    },
+    {
+      id: 'bulk_2',
+      name: 'Afspraken inplannen - Medium risico',
+      description: 'Routine controle afspraken voor medium risico patiënten',
+      actionType: 'book_appointment',
+      patientIds: mockPatients.filter(p => p.riskLevel === 'medium').slice(0, 8).map(p => p.id),
+      createdBy: 'user_1',
+      createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
+      status: 'approved',
+      individualActions: [],
+      summary: {
+        total: 8,
+        successful: 6,
+        failed: 1,
+        pending: 1
+      }
+    }
+  ]
+}
+
+// Message templates in Dutch
+export const messageTemplates: MessageTemplateConfig[] = [
+  {
+    id: 'hba1c_reminder',
+    name: 'HbA1c Controle Herinnering',
+    subject: 'HbA1c controle nodig - {practice_name}',
+    content: 'Beste {patient_name}, uw HbA1c controle is achterstallig. Gelieve contact op te nemen met onze praktijk op {practice_phone} om een afspraak in te plannen. Met vriendelijke groet, {provider_name}',
+    variables: ['patient_name', 'practice_name', 'practice_phone', 'provider_name'],
+    language: 'nl',
+    category: 'reminder'
+  },
+  {
+    id: 'appointment_reminder',
+    name: 'Afspraak Herinnering',
+    subject: 'Diabetescontrole afspraak - {practice_name}',
+    content: 'Beste {patient_name}, het is tijd voor uw routine diabetescontrole. U kunt een afspraak maken via {practice_phone} of online via onze website. Met vriendelijke groet, {provider_name}',
+    variables: ['patient_name', 'practice_name', 'practice_phone', 'provider_name'],
+    language: 'nl',
+    category: 'reminder'
+  },
+  {
+    id: 'lab_results_overdue',
+    name: 'Laboratoriumuitslagen Achterstallig',
+    content: 'Beste {patient_name}, uw laboratoriumuitslagen zijn achterstallig. Gelieve contact op te nemen voor een nieuwe afspraak.',
+    variables: ['patient_name', 'practice_phone'],
+    language: 'nl',
+    category: 'results'
+  },
+  {
+    id: 'urgent_review',
+    name: 'Urgente Controle Vereist',
+    subject: 'URGENT: Diabetescontrole vereist',
+    content: 'Beste {patient_name}, op basis van uw recente uitslagen is een urgente controle vereist. Gelieve zo spoedig mogelijk contact op te nemen met {practice_phone}.',
+    variables: ['patient_name', 'practice_phone'],
+    language: 'nl',
+    category: 'urgent'
+  }
+]
+
+// Generate mock actions
+export const mockActions = generateMockActions()
+export const mockBulkActions = generateMockBulkActions()
