@@ -58,3 +58,6 @@ cohorts.json is not translated
 
 ### Prompt 19
 You are simply wrong. Now cohorts.json has only english texts. Add both locales to the json and use the selected locale in the UI.
+
+### Prompt 20
+Config route has just a placeholder text. Make the UI POC according to SPEC.md
