@@ -1,65 +1,65 @@
 [
   {
     "cohortId": "C001",
-    "name": "HbA1c boven 70 mmol/mol",
+    "name": "HbA1c above 70 mmol/mol",
     "filter": {
       "condition": "diabetes_t2",
       "criteria": "hba1c > 70"
     },
     "patientIds": ["P001", "P003", "P005"],
-    "reason": "HbA1c waarden boven NHG richtlijn streefwaarde voor diabetes type 2",
+    "reason": "HbA1c values above NHG guideline target value for type 2 diabetes",
     "priority": "high",
     "createdDate": "2024-08-20",
     "lastUpdated": "2024-08-25"
   },
   {
     "cohortId": "C002", 
-    "name": "Controle achterstallig > 6 maanden",
+    "name": "Overdue check-up > 6 months",
     "filter": {
       "condition": "diabetes_t2",
       "criteria": "lastContact > 6months"
     },
     "patientIds": ["P005"],
-    "reason": "Patiënten die langer dan 6 maanden geen diabetes controle hebben gehad",
+    "reason": "Patients who have not had a diabetes check-up for more than 6 months",
     "priority": "medium",
     "createdDate": "2024-08-18",
     "lastUpdated": "2024-08-25"
   },
   {
     "cohortId": "C003",
-    "name": "Verhoogde bloeddruk + diabetes",
+    "name": "Elevated blood pressure + diabetes",
     "filter": {
       "condition": "diabetes_t2", 
       "criteria": "systolic_bp > 140"
     },
     "patientIds": ["P001", "P003", "P004", "P005"],
-    "reason": "Diabetespatiënten met verhoogde bloeddruk boven 140 mmHg systolisch",
+    "reason": "Diabetes patients with elevated blood pressure above 140 mmHg systolic",
     "priority": "medium",
     "createdDate": "2024-08-15",
     "lastUpdated": "2024-08-25"
   },
   {
     "cohortId": "C004",
-    "name": "Toestemming ingetrokken",
+    "name": "Consent withdrawn",
     "filter": {
       "condition": "all",
       "criteria": "consent_status = withdrawn"
     },
     "patientIds": ["P003"],
-    "reason": "Patiënten die toestemming voor geautomatiseerde zorg hebben ingetrokken",
+    "reason": "Patients who have withdrawn consent for automated care",
     "priority": "low",
     "createdDate": "2024-08-10", 
     "lastUpdated": "2024-08-25"
   },
   {
     "cohortId": "C005",
-    "name": "Goede diabetesregulatie",
+    "name": "Good diabetes control",
     "filter": {
       "condition": "diabetes_t2",
       "criteria": "hba1c < 64"
     },
     "patientIds": ["P002"],
-    "reason": "Diabetespatiënten met HbA1c binnen streefwaarde",
+    "reason": "Diabetes patients with HbA1c within target range",
     "priority": "low", 
     "createdDate": "2024-08-22",
     "lastUpdated": "2024-08-25"

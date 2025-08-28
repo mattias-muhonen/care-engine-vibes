@@ -52,3 +52,6 @@ Choose a patient cohort dropdown is missing translations
 
 ### Prompt 17
 Check all strings in Mass Actions and make sure they are translated.
+
+### Prompt 18
+cohorts.json is not translated
