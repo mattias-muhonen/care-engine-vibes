@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { Users, AlertTriangle, Clock, CheckCircle, Activity } from 'lucide-react'
 import patientsData from '../../mocks/patients.json'
 import cohortsData from '../../mocks/cohorts.json'
@@ -11,6 +11,7 @@ import CohortTable from '../organisms/CohortTable'
 import CohortDetailPanel from '../organisms/CohortDetailPanel'
 
 function Dashboard() {
+  const intl = useIntl()
   const [selectedCohort, setSelectedCohort] = useState<Cohort | null>(null)
   
   const patients = patientsData as Patient[]
@@ -65,35 +66,35 @@ function Dashboard() {
       {/* Summary tiles */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Tile
-          title="Totaal patiënten"
+          title={intl.formatMessage({ id: 'dashboard.tiles.totalPatients' })}
           value={totalPatients}
           icon={Users}
           variant="default"
         />
         
         <Tile
-          title="Actieve cohorten"
+          title={intl.formatMessage({ id: 'dashboard.tiles.activeCohorts' })}
           value={activeCohorts}
           icon={Activity}
           variant="default"
         />
         
         <Tile
-          title="Hoog risico"
+          title={intl.formatMessage({ id: 'dashboard.tiles.highRiskPatients' })}
           value={highRiskPatients}
           icon={AlertTriangle}
           variant="critical"
         />
         
         <Tile
-          title="Achterstallig"
+          title={intl.formatMessage({ id: 'dashboard.tiles.overdueReviews' })}
           value={overdueReviews}
           icon={Clock}
           variant="warning"
         />
         
         <Tile
-          title="Acties in wachtrij"
+          title={intl.formatMessage({ id: 'dashboard.tiles.pendingActions' })}
           value={pendingActions}
           icon={CheckCircle}
           variant="success"

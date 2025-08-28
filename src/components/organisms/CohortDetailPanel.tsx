@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { X, Users, Calendar, TrendingUp, Eye } from 'lucide-react'
 import { Cohort, Patient, getPatientsByIds, getLatestHbA1c } from '../../utils/patientFilters'
 import { formatDateRelative, calculateAge } from '../../utils/formatDate'
@@ -69,7 +70,9 @@ function CohortDetailPanel({ cohort, patients, onClose, onSelectPatient }: Cohor
       {/* Header */}
       <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Cohort Details</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            <FormattedMessage id="cohortDetail.title" />
+          </h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -86,7 +89,7 @@ function CohortDetailPanel({ cohort, patients, onClose, onSelectPatient }: Cohor
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">{cohort.name}</h3>
             <Badge variant={getPriorityVariant(cohort.priority)} className="mb-3">
-              {cohort.priority} prioriteit
+              {cohort.priority} <FormattedMessage id="cohortDetail.priorityLabel" />
             </Badge>
             <p className="text-sm text-gray-600">{cohort.reason}</p>
           </div>

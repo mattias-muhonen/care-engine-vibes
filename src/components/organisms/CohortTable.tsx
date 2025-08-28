@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { ArrowUpDown, Users, AlertTriangle, Clock, Filter } from 'lucide-react'
 import { Cohort, Patient } from '../../utils/patientFilters'
 import { formatDate } from '../../utils/formatDate'
 import Badge from '../atoms/Badge'
 import Button from '../atoms/Button'
 import Input from '../atoms/Input'
-import Select from '../atoms/Select'
+import TranslatableSelect from '../atoms/TranslatableSelect'
 
 interface CohortTableProps {
   cohorts: Cohort[]
@@ -18,6 +18,7 @@ type SortField = 'name' | 'priority' | 'patientCount' | 'lastUpdated'
 type SortDirection = 'asc' | 'desc'
 
 function CohortTable({ cohorts, onOpenCohort }: CohortTableProps) {
+  const intl = useIntl()
   const [sortField, setSortField] = useState<SortField>('priority')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
   const [searchTerm, setSearchTerm] = useState('')
@@ -99,16 +100,16 @@ function CohortTable({ cohorts, onOpenCohort }: CohortTableProps) {
     })
 
   const conditionOptions = [
-    { value: '', label: 'Alle condities' },
-    { value: 'diabetes_t2', label: 'Diabetes Type 2' },
-    { value: 'all', label: 'Alle condities' }
+    { value: '', labelId: 'cohorts.conditions.all' },
+    { value: 'diabetes_t2', labelId: 'cohorts.conditions.diabetes_t2' },
+    { value: 'all', labelId: 'cohorts.conditions.all' }
   ]
 
   const priorityOptions = [
-    { value: '', label: 'Alle prioriteiten' },
-    { value: 'high', label: 'Hoog' },
-    { value: 'medium', label: 'Medium' },
-    { value: 'low', label: 'Laag' }
+    { value: '', labelId: 'cohorts.priorities.all' },
+    { value: 'high', labelId: 'cohorts.priorities.high' },
+    { value: 'medium', labelId: 'cohorts.priorities.medium' },
+    { value: 'low', labelId: 'cohorts.priorities.low' }
   ]
 
   const SortButton = ({ field, children }: { field: SortField, children: React.ReactNode }) => (
@@ -131,25 +132,30 @@ function CohortTable({ cohorts, onOpenCohort }: CohortTableProps) {
           </h2>
           <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-gray-400" />
-            <span className="text-sm text-gray-600">{filteredCohorts.length} cohorten</span>
+            <span className="text-sm text-gray-600">
+              <FormattedMessage 
+                id="cohorts.filters.resultsCount" 
+                values={{ count: filteredCohorts.length }} 
+              />
+            </span>
           </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Input
-            placeholder="Zoek cohorten..."
+            placeholder={intl.formatMessage({ id: 'cohorts.filters.searchPlaceholder' })}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full"
           />
-          <Select
-            placeholder="Conditie filter"
+          <TranslatableSelect
+            placeholder={intl.formatMessage({ id: 'cohorts.filters.conditionPlaceholder' })}
             options={conditionOptions}
             value={filterCondition}
             onChange={(e) => setFilterCondition(e.target.value)}
           />
-          <Select
-            placeholder="Prioriteit filter"
+          <TranslatableSelect
+            placeholder={intl.formatMessage({ id: 'cohorts.filters.priorityPlaceholder' })}
             options={priorityOptions}
             value={filterPriority}
             onChange={(e) => setFilterPriority(e.target.value)}
@@ -162,7 +168,7 @@ function CohortTable({ cohorts, onOpenCohort }: CohortTableProps) {
               setFilterPriority('')
             }}
           >
-            Reset filters
+            <FormattedMessage id="cohorts.filters.resetFilters" />
           </Button>
         </div>
       </div>
@@ -173,22 +179,30 @@ function CohortTable({ cohorts, onOpenCohort }: CohortTableProps) {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left">
-                <SortButton field="name">Cohort naam</SortButton>
+                <SortButton field="name">
+                  <FormattedMessage id="cohorts.columns.name" />
+                </SortButton>
               </th>
               <th className="px-6 py-3 text-left">
-                <SortButton field="priority">Prioriteit</SortButton>
+                <SortButton field="priority">
+                  <FormattedMessage id="cohorts.columns.priority" />
+                </SortButton>
               </th>
               <th className="px-6 py-3 text-left">
-                <SortButton field="patientCount">Patiënten</SortButton>
+                <SortButton field="patientCount">
+                  <FormattedMessage id="cohorts.columns.patients" />
+                </SortButton>
               </th>
               <th className="px-6 py-3 text-left">
-                Conditie
+                <FormattedMessage id="cohorts.columns.condition" />
               </th>
               <th className="px-6 py-3 text-left">
-                <SortButton field="lastUpdated">Laatst bijgewerkt</SortButton>
+                <SortButton field="lastUpdated">
+                  <FormattedMessage id="cohorts.columns.lastUpdated" />
+                </SortButton>
               </th>
               <th className="px-6 py-3 text-left">
-                Acties
+                <FormattedMessage id="cohorts.columns.actions" />
               </th>
             </tr>
           </thead>
@@ -223,7 +237,9 @@ function CohortTable({ cohorts, onOpenCohort }: CohortTableProps) {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {cohort.filter.condition === 'diabetes_t2' ? 'Diabetes T2' : 'Alle'}
+                  <FormattedMessage 
+                    id={cohort.filter.condition === 'diabetes_t2' ? 'cohorts.condition.diabetes_t2' : 'cohorts.condition.all'} 
+                  />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center gap-1">
@@ -242,7 +258,7 @@ function CohortTable({ cohorts, onOpenCohort }: CohortTableProps) {
                       onOpenCohort(cohort.cohortId)
                     }}
                   >
-                    Details
+                    <FormattedMessage id="cohorts.actions.details" />
                   </Button>
                 </td>
               </tr>
@@ -254,9 +270,11 @@ function CohortTable({ cohorts, onOpenCohort }: CohortTableProps) {
       {filteredCohorts.length === 0 && (
         <div className="text-center py-12">
           <AlertTriangle className="w-8 h-8 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-sm font-medium text-gray-900 mb-2">Geen cohorten gevonden</h3>
+          <h3 className="text-sm font-medium text-gray-900 mb-2">
+            <FormattedMessage id="cohorts.empty.title" />
+          </h3>
           <p className="text-sm text-gray-500">
-            Probeer de filters aan te passen om meer resultaten te zien.
+            <FormattedMessage id="cohorts.empty.description" />
           </p>
         </div>
       )}
