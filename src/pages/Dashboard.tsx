@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import PatientDetailsDialog from "@/components/PatientDetailsDialog"
 import { Checkbox } from "@/components/ui/checkbox"
 import { 
   Users, 
@@ -15,11 +15,10 @@ import {
   Filter, 
   Search, 
   Eye,
-  Calendar,
-  CheckCircle2
+  Calendar
 } from "lucide-react"
 import { mockPatients } from "@/lib/mockData"
-import { dutch, formatDutchDate, formatDutchNumber, getAgeFromBirthDate, getDaysBetween } from "@/lib/dutch"
+import { dutch, formatDutchDate, getAgeFromBirthDate, getDaysBetween } from "@/lib/dutch"
 import type { Patient, RiskLevel } from "@/types/patient"
 
 interface PatientRowProps {
@@ -51,38 +50,49 @@ function PatientRow({ patient, isSelected, onSelect, onViewDetails }: PatientRow
   const hba1cStatus = latestLab ? getHbA1cStatus(latestLab.hba1c) : null
 
   return (
-    <TableRow className="table-row-hover border-b border-border/30">
-      <TableCell>
-        <Checkbox 
-          checked={isSelected} 
-          onCheckedChange={onSelect}
-        />
+    <TableRow className="table-row-hover" role="row">
+      <TableCell className="table-cell-padding">
+          <Checkbox 
+            checked={isSelected} 
+            onCheckedChange={onSelect}
+            aria-label={`Selecteer patiënt ${patient.firstName} ${patient.lastName}`}
+            className="mr-2 align-middle"
+          />
       </TableCell>
-      <TableCell className="font-medium">
-        <div className="flex items-center space-x-3">
-          <div>
-            <div className="font-semibold">{patient.firstName} {patient.lastName}</div>
-            <div className="text-sm text-muted-foreground">{age} jaar • BSN: {patient.bsn.slice(-4)}</div>
+      <TableCell className="table-cell-padding font-medium patient-info-cell">
+          <div className="space-y-1">
+            <div className="patient-name font-semibold text-base text-slate-800">{patient.firstName} {patient.lastName}</div>
+            <div className="text-sm text-muted-foreground">
+              <span className="sr-only">Leeftijd: </span>{age} jaar • 
+              <span className="sr-only">BSN: </span>BSN: {patient.bsn.slice(-4)}
+            </div>
           </div>
-        </div>
       </TableCell>
-      <TableCell>
-        <Badge className={`status-indicator ${getRiskBadgeColor(patient.riskLevel)}`}>
+      <TableCell className="table-cell-padding">
+        <Badge 
+          className={`status-indicator ${getRiskBadgeColor(patient.riskLevel)}`}
+          aria-label={`Risiconiveau: ${dutch.riskLevels[patient.riskLevel]}`}
+        >
           {dutch.riskLevels[patient.riskLevel]}
         </Badge>
       </TableCell>
-      <TableCell>
+      <TableCell className="table-cell-padding">
         {latestLab ? (
           <div className="space-y-1">
-            <div className={`font-semibold ${hba1cStatus?.color}`}>
+            <div className={`font-semibold text-base ${hba1cStatus?.color}`} aria-label={`HbA1c waarde: ${latestLab.hba1c} millimol per mol`}>
               {latestLab.hba1c} mmol/mol
             </div>
-            <div className="text-xs text-muted-foreground">
-              {formatDutchDate(latestLab.date)}
+            <div className="text-sm text-muted-foreground">
+              <span className="sr-only">Gemeten op: </span>{formatDutchDate(latestLab.date)}
             </div>
+            {hba1cStatus && (
+              <div className="text-xs font-medium" aria-label={`Status: ${hba1cStatus.status}`}>
+                {hba1cStatus.status}
+              </div>
+            )}
           </div>
         ) : (
-          <span className="text-muted-foreground">Geen data</span>
+          <span className="text-muted-foreground" aria-label="Geen HbA1c data beschikbaar">Geen data</span>
         )}
       </TableCell>
       <TableCell className="table-cell-padding">
@@ -146,169 +156,7 @@ function PatientRow({ patient, isSelected, onSelect, onViewDetails }: PatientRow
   )
 }
 
-interface PatientDetailsDialogProps {
-  patient: Patient | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
 
-function PatientDetailsDialog({ patient, open, onOpenChange }: PatientDetailsDialogProps) {
-  if (!patient) return null
-
-  const age = getAgeFromBirthDate(patient.dateOfBirth)
-  const latestLab = patient.labResults[0]
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center space-x-2">
-            <Users className="h-5 w-5" />
-            <span>{patient.firstName} {patient.lastName}</span>
-          </DialogTitle>
-          <DialogDescription>
-            {dutch.patientDetails} • {age} jaar • BSN: {patient.bsn}
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Patient Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Patiëntgegevens</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="font-medium">Geboortedatum:</span>
-                  <div>{formatDutchDate(patient.dateOfBirth)}</div>
-                </div>
-                <div>
-                  <span className="font-medium">Geslacht:</span>
-                  <div>{patient.gender === 'M' ? 'Man' : 'Vrouw'}</div>
-                </div>
-                <div>
-                  <span className="font-medium">Telefoon:</span>
-                  <div>{patient.phone}</div>
-                </div>
-                <div>
-                  <span className="font-medium">E-mail:</span>
-                  <div>{patient.email || 'Niet beschikbaar'}</div>
-                </div>
-                <div className="col-span-2">
-                  <span className="font-medium">Adres:</span>
-                  <div>{patient.address.street} {patient.address.houseNumber}</div>
-                  <div>{patient.address.postalCode} {patient.address.city}</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Medical Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Medische informatie</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="font-medium">Diabetes type:</span>
-                  <div>Type 2</div>
-                </div>
-                <div>
-                  <span className="font-medium">Diagnosedatum:</span>
-                  <div>{formatDutchDate(patient.diagnosisDate)}</div>
-                </div>
-                <div>
-                  <span className="font-medium">Risico niveau:</span>
-                  <Badge className={patient.riskLevel === 'high' ? 'bg-red-500' : patient.riskLevel === 'medium' ? 'bg-orange-500' : 'bg-green-500'}>
-                    {dutch.riskLevels[patient.riskLevel]}
-                  </Badge>
-                </div>
-                <div>
-                  <span className="font-medium">Hoofdbehandelaar:</span>
-                  <div>{patient.primaryProvider === 'GP' ? 'Huisarts' : 'POH-S'}</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Latest Lab Results */}
-          {latestLab && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Laatste laboratoriumuitslagen</CardTitle>
-                <CardDescription>{formatDutchDate(latestLab.date)}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex justify-between">
-                    <span>HbA1c:</span>
-                    <span className={`font-semibold ${latestLab.hba1c > 64 ? 'text-red-600' : latestLab.hba1c > 53 ? 'text-orange-600' : 'text-green-600'}`}>
-                      {latestLab.hba1c} mmol/mol
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Glucose:</span>
-                    <span className="font-semibold">{formatDutchNumber(latestLab.glucose)} mmol/L</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Cholesterol:</span>
-                    <span className="font-semibold">{formatDutchNumber(latestLab.cholesterol)} mmol/L</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>BMI:</span>
-                    <span className="font-semibold">{formatDutchNumber(latestLab.bmi)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Bloeddruk:</span>
-                    <span className="font-semibold">{latestLab.bloodPressure.systolic}/{latestLab.bloodPressure.diastolic} mmHg</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>eGFR:</span>
-                    <span className="font-semibold">{latestLab.egfr} mL/min/1.73m²</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Patient Flags */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Waarschuwingen</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {patient.flags.length > 0 ? (
-                <div className="space-y-2">
-                  {patient.flags.map((flag) => (
-                    <div key={flag.id} className="flex items-start space-x-2 p-2 border rounded">
-                      <AlertTriangle className="h-4 w-4 mt-0.5 text-orange-500" />
-                      <div className="flex-1">
-                        <div className="font-medium text-sm">{flag.message}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {formatDutchDate(flag.createdAt)}
-                        </div>
-                      </div>
-                      <Badge variant={flag.severity === 'high' ? 'destructive' : 'secondary'}>
-                        {dutch.riskLevels[flag.severity]}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex items-center space-x-2 text-green-600">
-                  <CheckCircle2 className="h-4 w-4" />
-                  <span>Geen actieve waarschuwingen</span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </DialogContent>
-    </Dialog>
-  )
-}
 
 export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -550,11 +398,11 @@ export default function Dashboard() {
             Gesorteerd op risico niveau en urgentie voor optimale zorgcoördinatie
           </CardDescription>
         </CardHeader>
+        <div id="patient-table-description" className="text-sm text-muted-foreground mb-4 px-6">
+          Tabel met patiëntgegevens inclusief risiconiveau, HbA1c waarden en laatste bezoekdatum. Gebruik tab om door de rijen te navigeren.
+        </div>
         <div className="overflow-x-auto">
           <Table role="table" aria-labelledby="patient-table-title" aria-describedby="patient-table-description">
-            <div id="patient-table-description" className="sr-only">
-              Tabel met patiëntgegevens inclusief risiconiveau, HbA1c waarden en laatste bezoekdatum. Gebruik tab om door de rijen te navigeren.
-            </div>
             <TableHeader className="bg-gradient-to-r from-slate-50 to-gray-50 border-b border-border/30">
               <TableRow role="row">
                 <TableHead className="table-cell-padding w-16 font-semibold text-slate-700">
@@ -565,12 +413,12 @@ export default function Dashboard() {
                     className="clickable-target"
                   />
                 </TableHead>
-                <TableHead className="table-cell-padding font-semibold text-slate-700 min-w-[200px]">Patiënt</TableHead>
-                <TableHead className="table-cell-padding font-semibold text-slate-700 min-w-[120px]">Risico</TableHead>
-                <TableHead className="table-cell-padding font-semibold text-slate-700 min-w-[140px]">HbA1c</TableHead>
+                <TableHead className="table-cell-padding font-semibold text-slate-700">Patiënt</TableHead>
+                <TableHead className="table-cell-padding font-semibold text-slate-700 min-w-[150px]">Risico</TableHead>
+                <TableHead className="table-cell-padding font-semibold text-slate-700">HbA1c</TableHead>
                 <TableHead className="table-cell-padding font-semibold text-slate-700 min-w-[150px]">Laatste bezoek</TableHead>
-                <TableHead className="table-cell-padding font-semibold text-slate-700 min-w-[160px]">Waarschuwingen</TableHead>
-                <TableHead className="table-cell-padding font-semibold text-slate-700 min-w-[120px]">Acties</TableHead>
+                <TableHead className="table-cell-padding font-semibold text-slate-700">Waarschuwingen</TableHead>
+                <TableHead className="table-cell-padding font-semibold text-slate-700">Acties</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

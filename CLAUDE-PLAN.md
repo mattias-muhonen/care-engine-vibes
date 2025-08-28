@@ -3,6 +3,9 @@
 ## 🎯 **Project Overview**
 Creating a Proof of Concept for a care-automation engine that helps Dutch general practices identify and manage Type 2 diabetes patients falling outside NHG (Dutch GP guidelines) thresholds.
 
+### **Technologies**
+The POC will be a simple SPA web application built with React, React-router, Tailwind and Radix-ui.
+
 ### **Target Users**
 - **POH-S** (Praktijkondersteuner Huisarts Somatiek) - Chronic Care Nurse
 - **GP** (General Practitioner) - Medical approval authority
