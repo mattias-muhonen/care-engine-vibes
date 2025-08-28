@@ -37,3 +37,12 @@ Continue with Milestone 5
 
 ### Prompt 12
 Please continue the conversation from where we left it off without asking the user any further questions. Continue with the last task that you were asked to work on.
+
+### Prompt 13
+Translations are not applied to mock data and Cohort Details.
+
+### Prompt 14
+cohortDetail.vitals.units is missin translation
+
+### Prompt 15
+You have not beend adding my prompts to PROMPT-HISTORY.md. Check what is missing and add them.
