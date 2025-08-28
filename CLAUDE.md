@@ -13,6 +13,7 @@ Hard constraints (do not violate)
 - All data must come from JSON files under /mocks and imported directly.
 - Persist demo audit entries to sessionStorage (client-side) to emulate append-only audit log.
 - Write all user prompts to a file called PROMPT-HISTORY.md
+- Always refer to CLAUDE-PLAN.md and SPEC.md
 
 Project file structure (recommended)
 - /src
