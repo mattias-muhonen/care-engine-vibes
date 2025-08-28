@@ -166,7 +166,7 @@ function MassActions() {
                   </option>
                   {cohorts.map(cohort => (
                     <option key={cohort.cohortId} value={cohort.cohortId}>
-                      {cohort.name}
+                      {intl.formatMessage({ id: `cohort.${cohort.cohortId}.name` }, { default: cohort.name })}
                     </option>
                   ))}
                 </select>
@@ -175,7 +175,7 @@ function MassActions() {
               {selectedCohort && (
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h3 className="text-sm font-medium text-gray-900 mb-2">
-                    {getSelectedCohort()?.name}
+                    {getSelectedCohort() && intl.formatMessage({ id: `cohort.${getSelectedCohort()!.cohortId}.name` }, { default: getSelectedCohort()!.name })}
                   </h3>
                   <p className="text-sm text-gray-600 mb-3">
                     {getSelectedCohort()?.reason}
@@ -298,14 +298,22 @@ function MassActions() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h3 className="text-sm font-medium text-blue-900 mb-2">Samenvatting actie</h3>
+                  <h3 className="text-sm font-medium text-blue-900 mb-2">
+                    <FormattedMessage id="massActions.summary.title" />
+                  </h3>
                   <dl className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <dt className="text-blue-700">Cohort:</dt>
-                      <dd className="text-blue-900 font-medium">{cohort?.name}</dd>
+                      <dt className="text-blue-700">
+                        <FormattedMessage id="massActions.summary.cohort" />
+                      </dt>
+                      <dd className="text-blue-900 font-medium">
+                        {cohort && intl.formatMessage({ id: `cohort.${cohort.cohortId}.name` }, { default: cohort.name })}
+                      </dd>
                     </div>
                     <div className="flex justify-between">
-                      <dt className="text-blue-700">Actie type:</dt>
+                      <dt className="text-blue-700">
+                        <FormattedMessage id="massActions.summary.actionType" />
+                      </dt>
                       <dd className="text-blue-900 font-medium">
                         <FormattedMessage id={`massActions.actionType.${actionType}`} />
                       </dd>

@@ -46,3 +46,6 @@ cohortDetail.vitals.units is missin translation
 
 ### Prompt 15
 You have not beend adding my prompts to PROMPT-HISTORY.md. Check what is missing and add them.
+
+### Prompt 16
+Choose a patient cohort dropdown is missing translations

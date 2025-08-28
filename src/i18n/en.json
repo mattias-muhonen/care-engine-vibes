@@ -179,5 +179,8 @@
   "riskLevel.critical": "Critical",
   "priority.high": "High",
   "priority.medium": "Medium",
-  "priority.low": "Low"
+  "priority.low": "Low",
+  "massActions.summary.title": "Action Summary",
+  "massActions.summary.cohort": "Cohort:",
+  "massActions.summary.actionType": "Action Type:"
 }

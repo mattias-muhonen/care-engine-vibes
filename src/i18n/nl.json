@@ -179,5 +179,8 @@
   "riskLevel.critical": "Kritiek",
   "priority.high": "Hoog",
   "priority.medium": "Gemiddeld",
-  "priority.low": "Laag"
+  "priority.low": "Laag",
+  "massActions.summary.title": "Samenvatting actie",
+  "massActions.summary.cohort": "Cohort:",
+  "massActions.summary.actionType": "Actie type:"
 }
