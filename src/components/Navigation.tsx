@@ -26,7 +26,7 @@ export default function Navigation() {
             >
               <div className="flex items-center space-x-4">
                 <div className="relative">
-                  <Activity className="h-10 w-10 text-primary drop-shadow-lg group-hover:scale-110 transition-transform duration-200" aria-hidden="true" />
+                  <Activity className="h-10 w-10 text-primary drop-shadow-lg transition-colors duration-200" aria-hidden="true" />
                   <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 to-blue-600/20 rounded-full blur opacity-75 group-hover:opacity-100 transition-opacity" aria-hidden="true"></div>
                 </div>
                 <div className="flex flex-col">
@@ -52,7 +52,7 @@ export default function Navigation() {
                         className={`clickable-target focus-ring ${
                           isActive ? 
                           "btn-medical" : 
-                          "btn-medical-secondary hover:scale-105 transition-all duration-200"
+                          "btn-medical-secondary transition-all duration-200"
                         }`}
                         aria-current={isActive ? "page" : undefined}
                         aria-label={`Ga naar ${item.name}`}

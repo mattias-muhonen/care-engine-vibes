@@ -109,9 +109,9 @@ function PatientRow({ patient, isSelected, onSelect, onViewDetails }: PatientRow
               role="listitem"
               aria-label={`Waarschuwing: ${flag.message}`}
             >
-              {flag.type === 'high_hba1c' && <AlertTriangle className="h-3 w-3" aria-hidden="true" />}
-              {flag.type === 'overdue_hba1c' && <Clock className="h-3 w-3" aria-hidden="true" />}
-              {flag.type === 'overdue_visit' && <Calendar className="h-3 w-3" aria-hidden="true" />}
+              {flag.type === 'high_hba1c' && <AlertTriangle className="h-3 w-3 icon-spacing-small" aria-hidden="true" />}
+              {flag.type === 'overdue_hba1c' && <Clock className="h-3 w-3 icon-spacing-small" aria-hidden="true" />}
+              {flag.type === 'overdue_visit' && <Calendar className="h-3 w-3 icon-spacing-small" aria-hidden="true" />}
               <span className="truncate">{flag.message.slice(0, 25)}{flag.message.length > 25 ? '...' : ''}</span>
             </Badge>
           ))}
@@ -138,7 +138,7 @@ function PatientRow({ patient, isSelected, onSelect, onViewDetails }: PatientRow
           className="clickable-target btn-medical-secondary h-auto min-w-[100px]"
           aria-label={`Bekijk details van patiënt ${patient.firstName} ${patient.lastName}`}
         >
-          <Eye className="h-4 w-4 mr-2" aria-hidden="true" />
+          <Eye className="h-4 w-4 icon-spacing" aria-hidden="true" />
           {dutch.view}
         </Button>
       </TableCell>
@@ -375,7 +375,7 @@ export default function Dashboard() {
 
       {/* Stats Cards */}
       <div className="grid-responsive">
-        <Card className="medical-card group hover:scale-105" role="region" aria-labelledby="total-patients-title">
+        <Card className="medical-card group" role="region" aria-labelledby="total-patients-title">
           <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0">
             <CardTitle id="total-patients-title" className="text-base font-semibold text-slate-700">
               Totaal Patiënten
@@ -392,7 +392,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="medical-card group hover:scale-105" role="region" aria-labelledby="high-risk-title">
+        <Card className="medical-card group" role="region" aria-labelledby="high-risk-title">
           <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0">
             <CardTitle id="high-risk-title" className="text-base font-semibold text-slate-700">
               Hoog Risico
@@ -409,7 +409,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="medical-card group hover:scale-105" role="region" aria-labelledby="medium-risk-title">
+        <Card className="medical-card group" role="region" aria-labelledby="medium-risk-title">
           <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0">
             <CardTitle id="medium-risk-title" className="text-base font-semibold text-slate-700">
               Gemiddeld Risico
@@ -426,7 +426,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="medical-card group hover:scale-105" role="region" aria-labelledby="low-risk-title">
+        <Card className="medical-card group" role="region" aria-labelledby="low-risk-title">
           <CardHeader className="medical-card-header flex flex-row items-center justify-between space-y-0">
             <CardTitle id="low-risk-title" className="text-base font-semibold text-slate-700">
               Laag Risico

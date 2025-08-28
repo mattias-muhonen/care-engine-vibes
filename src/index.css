@@ -162,11 +162,30 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 0;
   overflow: hidden;
+  position: relative;
 }
 
 .medical-card:hover {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
+  border-color: oklch(var(--primary) / 0.3);
+  background: linear-gradient(135deg, oklch(var(--card)), oklch(var(--card) / 0.98));
+}
+
+.medical-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, oklch(var(--primary)), #3b82f6, #8b5cf6);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.medical-card:hover::before {
+  transform: scaleX(1);
 }
 
 .medical-card-header {
@@ -192,6 +211,26 @@
   transition: all 0.2s ease;
   text-decoration: none;
   position: relative;
+  overflow: hidden;
+}
+
+.clickable-target::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: oklch(var(--primary) / 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+}
+
+.clickable-target:hover::before {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
 }
 
 .clickable-target:focus {
@@ -217,26 +256,80 @@
   border: 1px solid transparent;
 }
 
-/* AAA contrast ratios: 7:1 minimum */
+/* AAA contrast ratios: 7:1 minimum with enhanced hover effects */
 .risk-high {
-  background: #b91c1c; /* Darker red for better contrast */
+  background: #b91c1c;
   color: #ffffff;
   border-color: #7f1d1d;
   box-shadow: 0 2px 4px rgba(185, 28, 28, 0.2);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.risk-high::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.4s ease;
+}
+
+.risk-high:hover::before {
+  left: 100%;
 }
 
 .risk-medium {
-  background: #d97706; /* Adjusted orange for AAA contrast */
+  background: #d97706;
   color: #ffffff;
   border-color: #92400e;
   box-shadow: 0 2px 4px rgba(217, 119, 6, 0.2);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.risk-medium::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.4s ease;
+}
+
+.risk-medium:hover::before {
+  left: 100%;
 }
 
 .risk-low {
-  background: #065f46; /* Darker green for better contrast */
+  background: #065f46;
   color: #ffffff;
   border-color: #064e3b;
   box-shadow: 0 2px 4px rgba(6, 95, 70, 0.2);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.risk-low::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.4s ease;
+}
+
+.risk-low:hover::before {
+  left: 100%;
 }
 
 /* Large clickable buttons */
@@ -254,12 +347,29 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-medical::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-medical:hover::before {
+  left: 100%;
 }
 
 .btn-medical:hover {
   box-shadow: 0 4px 16px rgba(29, 78, 216, 0.4);
-  transform: translateY(-1px);
   background: linear-gradient(135deg, oklch(var(--primary) / 0.9), #1e40af);
+  border-color: oklch(var(--primary) / 0.8);
 }
 
 .btn-medical:focus {
@@ -281,12 +391,29 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-medical-secondary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(15,23,42,0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-medical-secondary:hover::before {
+  left: 100%;
 }
 
 .btn-medical-secondary:hover {
   background: #f1f5f9;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  transform: translateY(-1px);
+  border-color: #94a3b8;
 }
 
 .btn-medical-secondary:focus {
@@ -294,7 +421,7 @@
   outline-offset: 2px;
 }
 
-/* Enhanced navigation with proper spacing */
+/* Enhanced navigation with proper spacing and SVG fixes */
 .navigation-blur {
   background: oklch(var(--background) / 0.95);
   border-bottom: 1px solid oklch(var(--border));
@@ -303,14 +430,53 @@
   padding: 16px 0;
 }
 
+/* SVG icon spacing fixes */
+.icon-spacing {
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.icon-spacing-small {
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.icon-spacing-large {
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+/* Prevent SVG scaling issues */
+svg {
+  flex-shrink: 0;
+}
+
 /* Table improvements */
 .table-row-hover {
   transition: all 0.2s ease;
   border-bottom: 1px solid oklch(var(--border) / 0.3);
+  position: relative;
+}
+
+.table-row-hover::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, oklch(var(--primary)), #3b82f6);
+  transform: scaleY(0);
+  transition: transform 0.2s ease;
+}
+
+.table-row-hover:hover::before {
+  transform: scaleY(1);
 }
 
 .table-row-hover:hover {
-  background: oklch(var(--muted) / 0.5);
+  background: oklch(var(--muted) / 0.3);
+  border-left: 1px solid oklch(var(--primary) / 0.2);
 }
 
 .table-cell-padding {
@@ -353,6 +519,16 @@
   .navigation-blur {
     padding: 12px 0;
   }
+  
+  /* Remove problematic hover effects on touch devices */
+  .medical-card:hover {
+    transform: none;
+  }
+  
+  .btn-medical:hover,
+  .btn-medical-secondary:hover {
+    transform: none;
+  }
 }
 
 @media (max-width: 768px) {
@@ -365,6 +541,21 @@
 
   .medical-card {
     margin: 0 -4px;
+  }
+  
+  /* Disable hover effects completely on mobile */
+  .medical-card:hover::before,
+  .btn-medical:hover::before,
+  .btn-medical-secondary:hover::before,
+  .risk-high:hover::before,
+  .risk-medium:hover::before,
+  .risk-low:hover::before,
+  .table-row-hover:hover::before,
+  .clickable-target:hover::before {
+    transform: none;
+    left: -100%;
+    width: 0;
+    height: 0;
   }
   
   .medical-card-header {
@@ -443,6 +634,13 @@
   .medical-card:hover {
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
   }
+  
+  /* Enhanced animations for larger screens */
+  .medical-card::before,
+  .btn-medical::before,
+  .btn-medical-secondary::before {
+    transition: all 0.4s ease;
+  }
 }
 
 /* Focus indicators for keyboard navigation */
@@ -464,5 +662,33 @@
   .btn-medical,
   .btn-medical-secondary {
     border-width: 2px;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .medical-card::before,
+  .btn-medical::before,
+  .btn-medical-secondary::before,
+  .risk-high::before,
+  .risk-medium::before,
+  .risk-low::before,
+  .table-row-hover::before,
+  .clickable-target::before {
+    transition: none;
+  }
+  
+  .medical-card:hover::before,
+  .btn-medical:hover::before,
+  .btn-medical-secondary:hover::before,
+  .risk-high:hover::before,
+  .risk-medium:hover::before,
+  .risk-low:hover::before,
+  .table-row-hover:hover::before,
+  .clickable-target:hover::before {
+    transform: none;
+    left: -100%;
+    width: 0;
+    height: 0;
   }
 }
