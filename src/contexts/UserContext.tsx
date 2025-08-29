@@ -3,6 +3,7 @@ import { createContext, useContext, useState, ReactNode } from 'react'
 export type UserRole = 'gp' | 'poh-s' | 'practice-manager'
 
 export interface User {
+  id: string
   name: string
   role: UserRole
   practice: string
@@ -22,16 +23,19 @@ interface UserProviderProps {
 
 const defaultUsers: Record<UserRole, User> = {
   'gp': {
+    id: 'gp-001',
     name: 'Dr. van der Berg',
     role: 'gp',
     practice: 'Huisartsenpraktijk Rotterdam Centrum'
   },
   'poh-s': {
+    id: 'poh-s-001',
     name: 'Martine van der Berg (POH-S)',
     role: 'poh-s',
     practice: 'Huisartsenpraktijk Rotterdam Centrum'
   },
   'practice-manager': {
+    id: 'pm-001',
     name: 'Sarah de Jong (Practice Manager)',
     role: 'practice-manager',
     practice: 'Huisartsenpraktijk Rotterdam Centrum'

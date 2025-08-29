@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Settings, AlertTriangle, Users, TrendingUp, Save, RotateCcw, Lock, FileText } from 'lucide-react'
+import { Settings, AlertTriangle, Users, TrendingUp, Save, RotateCcw, Lock, FileText, History } from 'lucide-react'
 import { SettingsStorage, AppSettings } from '../../utils/storage'
 import { useUser, getUserRolePermissions } from '../../contexts/UserContext'
 import patientsData from '../../mocks/patients.json'
@@ -9,6 +9,7 @@ import Button from '../atoms/Button'
 import Badge from '../atoms/Badge'
 import Toast from '../atoms/Toast'
 import PathwayTemplateLibrary from '../organisms/PathwayTemplateLibrary'
+import ChangeHistoryModal from '../organisms/ChangeHistoryModal'
 
 interface PathwayStep {
   id: string
@@ -28,6 +29,7 @@ function Config() {
   const [activeTab, setActiveTab] = useState<'thresholds' | 'pathways' | 'templates' | 'governance'>('thresholds')
   const [hasChanges, setHasChanges] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null)
+  const [showChangeHistory, setShowChangeHistory] = useState(false)
 
   const patients = patientsData as Patient[]
 
@@ -345,18 +347,28 @@ function Config() {
           </p>
         </div>
         
-        {hasChanges && (
-          <div className="flex items-center space-x-3">
-            <Button variant="outline" onClick={resetSettings}>
-              <RotateCcw className="w-4 h-4 mr-2" />
-              <FormattedMessage id="config.reset" />
-            </Button>
-            <Button onClick={saveSettings} className="bg-green-600 hover:bg-green-700">
-              <Save className="w-4 h-4 mr-2" />
-              <FormattedMessage id="config.save" />
-            </Button>
-          </div>
-        )}
+        <div className="flex items-center space-x-3">
+          <Button 
+            variant="outline" 
+            onClick={() => setShowChangeHistory(true)}
+          >
+            <History className="w-4 h-4 mr-2" />
+            <FormattedMessage id="config.viewChangeHistory" />
+          </Button>
+          
+          {hasChanges && (
+            <>
+              <Button variant="outline" onClick={resetSettings}>
+                <RotateCcw className="w-4 h-4 mr-2" />
+                <FormattedMessage id="config.reset" />
+              </Button>
+              <Button onClick={saveSettings} className="bg-green-600 hover:bg-green-700">
+                <Save className="w-4 h-4 mr-2" />
+                <FormattedMessage id="config.save" />
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Navigation Tabs */}
@@ -412,6 +424,12 @@ function Config() {
           onClose={() => setToast(null)}
         />
       )}
+
+      {/* Change History Modal */}
+      <ChangeHistoryModal
+        isOpen={showChangeHistory}
+        onClose={() => setShowChangeHistory(false)}
+      />
     </div>
   )
 }

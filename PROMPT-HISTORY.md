@@ -76,3 +76,15 @@ Continue where you left off.
 
 ### Prompt 25
 "Enable authorized practice users to create a 'Local Override' of any pathway template. Allow editing only on specific safe fields (e.g., visit intervals, step channels, optional step inclusion/exclusion). Show a side-by-side diff view: NHG Default vs. Local Override, highlight all deviations, and include 'Revert to Default' and 'Save with note' capabilities. Require justification and dual-approval for risky overrides (e.g., removing critical annual reviews)."
+
+### Prompt 26
+"On patient and cohort detail screens, add 'Assign Pathway' and 'Adjust Pathway' options. Per patient, permit only adjustment of scheduling (intervals/next due), temporary snooze/pause, or justified clinical exclusion (with required reason). For any exclusion of a critical step, display a confirmation modal and require countersign. Reflect all customizations in a patient audit trail."
+
+### Prompt 27
+Please continue the conversation from where we left it off without asking the user any further questions. Continue with the last task that you were asked to work on.
+
+### Prompt 28
+The patient cards in Cohort Details have a small eye icon to open patientdetails. Use a button so that it's more visible.
+
+### Prompt 29
+"Before publishing any configuration or override, display an 'Impact Preview' dialog: show the number of patients affected, changes in cohort size, system workload impact, and next due dates. Log all changes with: who made them, when, and justification. Provide an instant undo and change history view."

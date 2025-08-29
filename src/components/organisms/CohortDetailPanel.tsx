@@ -230,15 +230,17 @@ function CohortDetailPanel({ cohort, patients, onClose, onSelectPatient }: Cohor
                       </div>
                     </div>
                     
-                    <button
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={(e) => {
                         e.stopPropagation()
                         onSelectPatient(patient.id)
                       }}
-                      className="p-1 hover:bg-gray-100 rounded transition-colors"
                     >
-                      <Eye className="w-4 h-4 text-gray-400" />
-                    </button>
+                      <Eye className="w-3 h-3 mr-1" />
+                      <FormattedMessage id="cohortDetail.viewPatient" />
+                    </Button>
                   </div>
                 </div>
               )

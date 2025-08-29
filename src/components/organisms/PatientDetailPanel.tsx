@@ -1,9 +1,15 @@
+import { useState, useEffect } from 'react'
 import { FormattedMessage } from 'react-intl'
-import { X, User, Activity, FileText, TrendingUp, AlertCircle } from 'lucide-react'
+import { X, User, Activity, FileText, TrendingUp, AlertCircle, Plus, Settings } from 'lucide-react'
 import { Patient } from '../../utils/patientFilters'
 import { formatDate, formatDateRelative, calculateAge } from '../../utils/formatDate'
 import { logUserAction } from '../../utils/storage'
+import { PatientPathwayAssignment, PatientPathwayStorage } from '../../utils/patientPathways'
+import { useUser, getUserRolePermissions } from '../../contexts/UserContext'
 import Badge from '../atoms/Badge'
+import Button from '../atoms/Button'
+import PatientPathwayAssignmentModal from './PatientPathwayAssignmentModal'
+import PatientPathwayAdjustmentModal from './PatientPathwayAdjustmentModal'
 
 interface PatientDetailPanelProps {
   patient: Patient | null
@@ -11,6 +17,12 @@ interface PatientDetailPanelProps {
 }
 
 function PatientDetailPanel({ patient, onClose }: PatientDetailPanelProps) {
+  const { user } = useUser()
+  const permissions = getUserRolePermissions(user.role)
+  const [patientPathwayAssignments, setPatientPathwayAssignments] = useState<PatientPathwayAssignment[]>([])
+  const [showAssignmentModal, setShowAssignmentModal] = useState(false)
+  const [adjustmentAssignment, setAdjustmentAssignment] = useState<PatientPathwayAssignment | null>(null)
+
   if (!patient) return null
 
   // Log patient detail view
@@ -19,6 +31,22 @@ function PatientDetailPanel({ patient, onClose }: PatientDetailPanelProps) {
     patientName: patient.name,
     riskLevel: patient.riskLevel
   })
+
+  useEffect(() => {
+    // Load patient pathway assignments
+    const assignments = PatientPathwayStorage.getActiveAssignmentsByPatient(patient.id)
+    setPatientPathwayAssignments(assignments)
+  }, [patient.id])
+
+  const handlePathwayAssigned = (assignment: PatientPathwayAssignment) => {
+    setPatientPathwayAssignments(prev => [...prev, assignment])
+  }
+
+  const handlePathwayUpdated = (updatedAssignment: PatientPathwayAssignment) => {
+    setPatientPathwayAssignments(prev => 
+      prev.map(a => a.id === updatedAssignment.id ? updatedAssignment : a)
+    )
+  }
 
   const getRiskBadgeVariant = (riskLevel: string) => {
     switch (riskLevel) {
@@ -187,6 +215,118 @@ function PatientDetailPanel({ patient, onClose }: PatientDetailPanelProps) {
           </div>
         </div>
 
+        {/* Pathway Assignments */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Settings className="w-5 h-5 text-gray-500" />
+              <h3 className="text-lg font-medium text-gray-900">
+                <FormattedMessage id="patientDetail.pathwayAssignments" />
+              </h3>
+            </div>
+            {permissions.canConfigureThresholds && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowAssignmentModal(true)}
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                <FormattedMessage id="patientDetail.pathwayAssignments.assign" />
+              </Button>
+            )}
+          </div>
+
+          {patientPathwayAssignments.length > 0 ? (
+            <div className="space-y-3">
+              {patientPathwayAssignments.map((assignment) => (
+                <div key={assignment.id} className="bg-white border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h4 className="font-medium text-gray-900">
+                        {assignment.template.name.en}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        {assignment.template.condition} • Assigned {formatDateRelative(assignment.assignedDate)}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant={assignment.status === 'active' ? 'success' : 'default'}>
+                        <FormattedMessage id={`patientPathway.status.${assignment.status}`} />
+                      </Badge>
+                      {permissions.canConfigureThresholds && (
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => setAdjustmentAssignment(assignment)}
+                        >
+                          <Settings className="w-3 h-3 mr-1" />
+                          <FormattedMessage id="patientDetail.pathwayAssignments.adjust" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="text-xs text-gray-500">
+                      <FormattedMessage id="patientDetail.pathwayAssignments.progress" />:
+                    </div>
+                    <div className="space-y-1">
+                      {assignment.steps.slice(0, 3).map((step: any, index: number) => {
+                        const stepStatus = step.status
+                        const statusVariant = stepStatus === 'completed' ? 'success' : 
+                                           stepStatus === 'excluded' ? 'default' : 
+                                           stepStatus === 'snoozed' ? 'warning' : 'default'
+                        
+                        return (
+                          <div key={step.stepId} className="flex items-center justify-between text-xs">
+                            <span className="text-gray-700">
+                              {index + 1}. {step.originalStep.name.en}
+                            </span>
+                            <Badge variant={statusVariant} className="text-xs">
+                              <FormattedMessage id={`patientPathway.stepStatus.${stepStatus}`} />
+                            </Badge>
+                          </div>
+                        )
+                      })}
+                      {assignment.steps.length > 3 && (
+                        <div className="text-xs text-gray-500 text-center pt-1">
+                          +{assignment.steps.length - 3} more steps
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {assignment.overallJustification && (
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <div className="text-xs text-gray-500 mb-1">
+                        <FormattedMessage id="patientDetail.pathwayAssignments.justification" />:
+                      </div>
+                      <p className="text-sm text-gray-700">{assignment.overallJustification}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-gray-50 rounded-lg p-6 text-center">
+              <Settings className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+              <p className="text-sm text-gray-500 mb-3">
+                <FormattedMessage id="patientDetail.pathwayAssignments.noAssignments" />
+              </p>
+              {permissions.canConfigureThresholds && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setShowAssignmentModal(true)}
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  <FormattedMessage id="patientDetail.pathwayAssignments.assignFirst" />
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Vitals Timeline */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
@@ -309,6 +449,24 @@ function PatientDetailPanel({ patient, onClose }: PatientDetailPanelProps) {
           )}
         </div>
       </div>
+
+      {/* Pathway Assignment Modal */}
+      {showAssignmentModal && (
+        <PatientPathwayAssignmentModal
+          patient={patient}
+          onClose={() => setShowAssignmentModal(false)}
+          onAssigned={handlePathwayAssigned}
+        />
+      )}
+
+      {/* Pathway Adjustment Modal */}
+      {adjustmentAssignment && (
+        <PatientPathwayAdjustmentModal
+          assignment={adjustmentAssignment}
+          onClose={() => setAdjustmentAssignment(null)}
+          onUpdated={handlePathwayUpdated}
+        />
+      )}
     </div>
   )
 }

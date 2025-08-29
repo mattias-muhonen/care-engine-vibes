@@ -23,9 +23,12 @@ import {
 import { useUser, getUserRolePermissions } from '../../contexts/UserContext'
 import { useLocale } from '../../contexts/LocaleContext'
 import { logUserAction } from '../../utils/storage'
+import { calculatePathwayOverrideImpact } from '../../utils/impactAnalysis'
+import { logPathwayOverrideChange } from '../../utils/changeHistory'
 import Button from '../atoms/Button'
 import Badge from '../atoms/Badge'
 import Toast from '../atoms/Toast'
+import ImpactPreviewModal from './ImpactPreviewModal'
 
 interface PathwayOverrideEditorProps {
   originalTemplate: PathwayTemplate
@@ -51,6 +54,8 @@ function PathwayOverrideEditor({
   const [justification, setJustification] = useState(existingOverride?.justification || '')
   const [showDiff, setShowDiff] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null)
+  const [showImpactPreview, setShowImpactPreview] = useState(false)
+  const [impactData, setImpactData] = useState<any>(null)
 
   const riskLevel = calculateRiskLevel(originalTemplate, override.overrides)
   const needsApproval = requiresDualApproval(riskLevel)
@@ -127,6 +132,18 @@ function PathwayOverrideEditor({
       justification: justification.trim()
     }
 
+    // Calculate impact and show preview
+    const impact = calculatePathwayOverrideImpact(originalTemplate, finalOverride)
+    setImpactData(impact)
+    setShowImpactPreview(true)
+  }
+
+  const handleConfirmSave = async (impactJustification: string) => {
+    const finalOverride = {
+      ...override,
+      justification: justification.trim()
+    }
+
     if (needsApproval && !finalOverride.approvedBy?.length) {
       setToast({
         message: intl.formatMessage({ id: 'pathwayOverride.approvalRequested' }),
@@ -135,6 +152,17 @@ function PathwayOverrideEditor({
     }
 
     LocalOverrideStorage.saveOverride(finalOverride)
+    
+    // Log the change with full impact data
+    logPathwayOverrideChange(
+      user.id,
+      user.name,
+      originalTemplate.name.en,
+      impactJustification,
+      impactData,
+      originalTemplate,
+      finalOverride
+    )
     
     logUserAction('pathway_override_created', {
       templateId: originalTemplate.id,
@@ -148,6 +176,7 @@ function PathwayOverrideEditor({
       message: intl.formatMessage({ id: 'pathwayOverride.saved' }),
       type: 'success'
     })
+    setShowImpactPreview(false)
   }
 
   const handleApproval = () => {
@@ -598,6 +627,18 @@ function PathwayOverrideEditor({
           message={toast.message}
           type={toast.type}
           onClose={() => setToast(null)}
+        />
+      )}
+
+      {/* Impact Preview Modal */}
+      {showImpactPreview && impactData && (
+        <ImpactPreviewModal
+          isOpen={showImpactPreview}
+          impactData={impactData}
+          originalItem={originalTemplate}
+          proposedChanges={override}
+          onConfirm={handleConfirmSave}
+          onCancel={() => setShowImpactPreview(false)}
         />
       )}
     </div>
