@@ -5,12 +5,14 @@ import {
   Users, 
   Settings, 
   FileText,
-  Activity 
+  Activity,
+  BarChart3 
 } from 'lucide-react'
 
 const navigationItems = [
   { to: '/dashboard', icon: LayoutDashboard, messageId: 'nav.dashboard' },
   { to: '/mass-actions', icon: Users, messageId: 'nav.massActions' },
+  { to: '/administrative-metrics', icon: BarChart3, messageId: 'nav.administrativeMetrics' },
   { to: '/config', icon: Settings, messageId: 'nav.config' },
   { to: '/audit', icon: FileText, messageId: 'nav.audit' },
 ]

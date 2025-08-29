@@ -1,0 +1,241 @@
+{
+  "time_window": "2024-03-01_to_2024-03-31",
+  "metrics": [
+    {
+      "name": "patients_monitored",
+      "display": "Patients Monitored (last 30 days)",
+      "type": "count",
+      "value": 1278
+    },
+    {
+      "name": "chronic_patients_scanned",
+      "display": "Unique Chronic Patients Scanned",
+      "type": "count",
+      "value": 834
+    },
+    {
+      "name": "patients_flagged",
+      "display": "Patients Flagged with Out-of-Threshold Readings",
+      "type": "count",
+      "value": 133
+    },
+    {
+      "name": "issues_identified",
+      "display": "Total Issues Identified",
+      "type": "count",
+      "value": 219
+    },
+    {
+      "name": "issues_closed",
+      "display": "Issues Closed/Resolved",
+      "type": "count_percentage",
+      "count": 91,
+      "percentage": 42
+    },
+    {
+      "name": "automated_actions",
+      "display": "Automated Actions Triggered",
+      "type": "count",
+      "value": 144
+    },
+    {
+      "name": "human_in_loop_approvals",
+      "display": "Human-in-Loop Approvals",
+      "type": "count",
+      "value": 67
+    },
+    {
+      "name": "avg_time_to_action",
+      "display": "Avg. Time from Flag to Action (days)",
+      "type": "number",
+      "value": 1.8
+    }
+  ],
+  "trends": [
+    {
+      "name": "patients_scanned_over_time",
+      "display": "Patients Scanned per Week",
+      "type": "timeseries",
+      "series": [
+        {"date": "2024-02-05", "week": "2024-W06", "value": 201},
+        {"date": "2024-02-12", "week": "2024-W07", "value": 218},
+        {"date": "2024-02-19", "week": "2024-W08", "value": 234},
+        {"date": "2024-02-26", "week": "2024-W09", "value": 243},
+        {"date": "2024-03-04", "week": "2024-W10", "value": 256},
+        {"date": "2024-03-11", "week": "2024-W11", "value": 332},
+        {"date": "2024-03-18", "week": "2024-W12", "value": 447},
+        {"date": "2024-03-25", "week": "2024-W13", "value": 512}
+      ]
+    },
+    {
+      "name": "issues_identified_over_time",
+      "display": "Issues Identified per Week",
+      "type": "timeseries",
+      "series": [
+        {"date": "2024-02-05", "week": "2024-W06", "value": 12},
+        {"date": "2024-02-12", "week": "2024-W07", "value": 18},
+        {"date": "2024-02-19", "week": "2024-W08", "value": 23},
+        {"date": "2024-02-26", "week": "2024-W09", "value": 31},
+        {"date": "2024-03-04", "week": "2024-W10", "value": 28},
+        {"date": "2024-03-11", "week": "2024-W11", "value": 45},
+        {"date": "2024-03-18", "week": "2024-W12", "value": 52},
+        {"date": "2024-03-25", "week": "2024-W13", "value": 38}
+      ]
+    },
+    {
+      "name": "issues_resolution_rate",
+      "display": "Issue Resolution Rate (%)",
+      "type": "timeseries",
+      "series": [
+        {"date": "2024-02-05", "week": "2024-W06", "value": 65},
+        {"date": "2024-02-12", "week": "2024-W07", "value": 72},
+        {"date": "2024-02-19", "week": "2024-W08", "value": 68},
+        {"date": "2024-02-26", "week": "2024-W09", "value": 74},
+        {"date": "2024-03-04", "week": "2024-W10", "value": 78},
+        {"date": "2024-03-11", "week": "2024-W11", "value": 71},
+        {"date": "2024-03-18", "week": "2024-W12", "value": 69},
+        {"date": "2024-03-25", "week": "2024-W13", "value": 76}
+      ]
+    },
+    {
+      "name": "avg_time_to_action_trend",
+      "display": "Average Time to Action (days)",
+      "type": "timeseries",
+      "series": [
+        {"date": "2024-02-05", "week": "2024-W06", "value": 2.4},
+        {"date": "2024-02-12", "week": "2024-W07", "value": 2.1},
+        {"date": "2024-02-19", "week": "2024-W08", "value": 2.3},
+        {"date": "2024-02-26", "week": "2024-W09", "value": 1.9},
+        {"date": "2024-03-04", "week": "2024-W10", "value": 1.7},
+        {"date": "2024-03-11", "week": "2024-W11", "value": 1.8},
+        {"date": "2024-03-18", "week": "2024-W12", "value": 1.6},
+        {"date": "2024-03-25", "week": "2024-W13", "value": 1.4}
+      ]
+    },
+    {
+      "name": "automated_vs_manual_actions",
+      "display": "Automated vs Manual Actions",
+      "type": "timeseries_multi",
+      "series": [
+        {
+          "name": "automated",
+          "label": "Automated Actions",
+          "data": [
+            {"date": "2024-02-05", "week": "2024-W06", "value": 8},
+            {"date": "2024-02-12", "week": "2024-W07", "value": 12},
+            {"date": "2024-02-19", "week": "2024-W08", "value": 15},
+            {"date": "2024-02-26", "week": "2024-W09", "value": 18},
+            {"date": "2024-03-04", "week": "2024-W10", "value": 22},
+            {"date": "2024-03-11", "week": "2024-W11", "value": 28},
+            {"date": "2024-03-18", "week": "2024-W12", "value": 31},
+            {"date": "2024-03-25", "week": "2024-W13", "value": 35}
+          ]
+        },
+        {
+          "name": "manual",
+          "label": "Manual Actions",
+          "data": [
+            {"date": "2024-02-05", "week": "2024-W06", "value": 15},
+            {"date": "2024-02-12", "week": "2024-W07", "value": 14},
+            {"date": "2024-02-19", "week": "2024-W08", "value": 12},
+            {"date": "2024-03-04", "week": "2024-W10", "value": 11},
+            {"date": "2024-03-11", "week": "2024-W11", "value": 9},
+            {"date": "2024-03-18", "week": "2024-W12", "value": 8},
+            {"date": "2024-03-25", "week": "2024-W13", "value": 7}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "patient_engagement_metrics",
+      "display": "Patient Engagement Over Time",
+      "type": "timeseries_multi",
+      "series": [
+        {
+          "name": "self_bookings",
+          "label": "Self-Bookings",
+          "data": [
+            {"date": "2024-02-05", "week": "2024-W06", "value": 45},
+            {"date": "2024-02-12", "week": "2024-W07", "value": 52},
+            {"date": "2024-02-19", "week": "2024-W08", "value": 48},
+            {"date": "2024-02-26", "week": "2024-W09", "value": 56},
+            {"date": "2024-03-04", "week": "2024-W10", "value": 61},
+            {"date": "2024-03-11", "week": "2024-W11", "value": 58},
+            {"date": "2024-03-18", "week": "2024-W12", "value": 64},
+            {"date": "2024-03-25", "week": "2024-W13", "value": 67}
+          ]
+        },
+        {
+          "name": "message_responses",
+          "label": "Message Responses",
+          "data": [
+            {"date": "2024-02-05", "week": "2024-W06", "value": 78},
+            {"date": "2024-02-12", "week": "2024-W07", "value": 82},
+            {"date": "2024-02-19", "week": "2024-W08", "value": 85},
+            {"date": "2024-02-26", "week": "2024-W09", "value": 81},
+            {"date": "2024-03-04", "week": "2024-W10", "value": 87},
+            {"date": "2024-03-11", "week": "2024-W11", "value": 89},
+            {"date": "2024-03-18", "week": "2024-W12", "value": 92},
+            {"date": "2024-03-25", "week": "2024-W13", "value": 88}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "issues_by_condition",
+      "display": "Identified Issues by Condition",
+      "type": "categorical",
+      "values": [
+        {"condition": "T2DM", "count": 87},
+        {"condition": "Hypertension", "count": 73},
+        {"condition": "CKD", "count": 59}
+      ]
+    }
+  ],
+  "operational_snapshots": [
+    {
+      "name": "unreviewed_flagged_patients",
+      "display": "Unreviewed Flagged Patients",
+      "type": "count",
+      "value": 18
+    },
+    {
+      "name": "overdue_bookings",
+      "display": "Overdue Bookings (patient didn't self-book)",
+      "type": "count",
+      "value": 6
+    },
+    {
+      "name": "delivery_errors",
+      "display": "Messages Failed (delivery errors)",
+      "type": "count",
+      "value": 3
+    },
+    {
+      "name": "critical_incidents",
+      "display": "Critical Incidents",
+      "type": "count",
+      "value": 0
+    }
+  ],
+  "value_add": [
+    {
+      "name": "review_completion_rate",
+      "display": "Review Completion Rate",
+      "type": "percentage",
+      "value": 77
+    },
+    {
+      "name": "time_saved_vs_manual",
+      "display": "Time Saved vs Manual",
+      "type": "hours",
+      "value": 13
+    },
+    {
+      "name": "nps",
+      "display": "NPS (staff users, last survey)",
+      "type": "score",
+      "value": 42
+    }
+  ]
+}

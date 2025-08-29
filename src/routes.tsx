@@ -4,6 +4,7 @@ import Dashboard from './components/views/Dashboard'
 import MassActions from './components/views/MassActions'
 import Config from './components/views/Config'
 import Audit from './components/views/Audit'
+import AdministrativeMetrics from './components/views/AdministrativeMetrics'
 
 function AppRoutes() {
   return (
@@ -14,6 +15,7 @@ function AppRoutes() {
         <Route path="/mass-actions" element={<MassActions />} />
         <Route path="/config" element={<Config />} />
         <Route path="/audit" element={<Audit />} />
+        <Route path="/administrative-metrics" element={<AdministrativeMetrics />} />
       </Routes>
     </Layout>
   )
