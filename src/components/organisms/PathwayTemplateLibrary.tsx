@@ -323,7 +323,6 @@ function PathwayTemplateLibrary(_props: PathwayTemplateLibraryProps) {
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <span className="text-3xl">{getConditionIcon(selectedTemplate.condition)}</span>
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">
                   {selectedTemplate.name[locale]}
