@@ -53,14 +53,6 @@ function PathwayTemplateLibrary(_props: PathwayTemplateLibraryProps) {
     }
   }
 
-  const getConditionIcon = (condition: string) => {
-    switch (condition) {
-      case 'T2DM': return '🩺'
-      case 'Hypertension': return '❤️'
-      case 'Respiratory': return '🫁'
-      default: return '📋'
-    }
-  }
 
   const handleViewTemplate = (template: PathwayTemplate) => {
     setSelectedTemplate(template)
@@ -178,7 +170,6 @@ function PathwayTemplateLibrary(_props: PathwayTemplateLibraryProps) {
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-2">
-                  <span className="text-2xl">{getConditionIcon(template.condition)}</span>
                   <div>
                     <h4 className="font-medium text-gray-900">
                       {template.name[locale]}

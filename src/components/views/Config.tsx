@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Settings, AlertTriangle, Users, TrendingUp, Save, RotateCcw, Lock, FileText, History } from 'lucide-react'
+import { Settings, Users, TrendingUp, Save, RotateCcw, FileText, History } from 'lucide-react'
 import { SettingsStorage, AppSettings } from '../../utils/storage'
 import { useUser, getUserRolePermissions } from '../../contexts/UserContext'
 import patientsData from '../../mocks/patients.json'
@@ -182,8 +182,7 @@ function Config() {
 
       {/* Impact Preview */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <div className="flex items-center mb-4">
-          <TrendingUp className="w-5 h-5 text-blue-600 mr-2" />
+        <div className="mb-4">
           <h4 className="text-sm font-medium text-blue-900">
             <FormattedMessage id="config.impact.title" />
           </h4>
@@ -278,23 +277,16 @@ function Config() {
         
         <div className="space-y-6">
           <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-            <div className="flex items-center">
-              {settings.killSwitchActive ? (
-                <AlertTriangle className="w-6 h-6 text-red-600 mr-3" />
-              ) : (
-                <Settings className="w-6 h-6 text-green-600 mr-3" />
-              )}
-              <div>
-                <div className="font-medium text-gray-900">
-                  <FormattedMessage id="config.governance.killSwitch" />
-                </div>
-                <div className="text-sm text-gray-500">
-                  {settings.killSwitchActive ? (
-                    <FormattedMessage id="config.governance.killSwitchActive" />
-                  ) : (
-                    <FormattedMessage id="config.governance.killSwitchInactive" />
-                  )}
-                </div>
+            <div>
+              <div className="font-medium text-gray-900">
+                <FormattedMessage id="config.governance.killSwitch" />
+              </div>
+              <div className="text-sm text-gray-500">
+                {settings.killSwitchActive ? (
+                  <FormattedMessage id="config.governance.killSwitchActive" />
+                ) : (
+                  <FormattedMessage id="config.governance.killSwitchInactive" />
+                )}
               </div>
             </div>
             <Badge variant={settings.killSwitchActive ? 'critical' : 'success'}>
@@ -405,7 +397,6 @@ function Config() {
           renderGovernance()
         ) : (
           <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-            <Lock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h2 className="text-lg font-medium text-gray-900 mb-2">
               <FormattedMessage id="config.governance.restricted.title" />
             </h2>
