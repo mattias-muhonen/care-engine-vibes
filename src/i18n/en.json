@@ -431,5 +431,22 @@
   "pathwayOverride.saved": "Override saved",
   "pathwayOverride.approvalRequested": "Approval requested",
   "pathwayOverride.immediate": "Immediate",
-  "pathwayOverride.days": "{count} days"
+  "pathwayOverride.days": "{count} days",
+  "pathwayOverride.workflowStatus": "Workflow Status",
+  "pathwayOverride.workflow.draft": "Draft",
+  "pathwayOverride.workflow.review": "Under Review",
+  "pathwayOverride.workflow.published": "Published",
+  "pathwayOverride.workflow.archived": "Archived",
+  "pathwayOverride.publishedAt": "Published on {date} by {publisher}",
+  "pathwayOverride.validationErrors": "Validation Errors",
+  "pathwayOverride.validationWarnings": "Validation Warnings",
+  "pathwayOverride.nhgDeviations": "NHG Deviations ({count})",
+  "pathwayOverride.criticalDeviations": "Critical Deviations ({count})",
+  "pathwayOverride.moreDeviations": "... and {count} more",
+  "pathwayOverride.saveDraft": "Save Draft",
+  "pathwayOverride.requestReview": "Request Review",
+  "pathwayOverride.publish": "Publish",
+  "pathwayOverride.savedDraft": "Draft saved",
+  "pathwayOverride.reviewRequested": "Review requested",
+  "pathwayOverride.published": "Published"
 }

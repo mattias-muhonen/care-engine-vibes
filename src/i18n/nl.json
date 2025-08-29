@@ -431,5 +431,22 @@
   "pathwayOverride.saved": "Aanpassing opgeslagen",
   "pathwayOverride.approvalRequested": "Goedkeuring aangevraagd",
   "pathwayOverride.immediate": "Direct",
-  "pathwayOverride.days": "{count} dagen"
+  "pathwayOverride.days": "{count} dagen",
+  "pathwayOverride.workflowStatus": "Workflow Status",
+  "pathwayOverride.workflow.draft": "Concept",
+  "pathwayOverride.workflow.review": "In Beoordeling",
+  "pathwayOverride.workflow.published": "Gepubliceerd",
+  "pathwayOverride.workflow.archived": "Gearchiveerd",
+  "pathwayOverride.publishedAt": "Gepubliceerd op {date} door {publisher}",
+  "pathwayOverride.validationErrors": "Validatie Fouten",
+  "pathwayOverride.validationWarnings": "Validatie Waarschuwingen",
+  "pathwayOverride.nhgDeviations": "NHG Afwijkingen ({count})",
+  "pathwayOverride.criticalDeviations": "Kritieke Afwijkingen ({count})",
+  "pathwayOverride.moreDeviations": "... en nog {count} meer",
+  "pathwayOverride.saveDraft": "Concept Opslaan",
+  "pathwayOverride.requestReview": "Beoordeling Aanvragen",
+  "pathwayOverride.publish": "Publiceren",
+  "pathwayOverride.savedDraft": "Concept opgeslagen",
+  "pathwayOverride.reviewRequested": "Beoordeling aangevraagd",
+  "pathwayOverride.published": "Gepubliceerd"
 }

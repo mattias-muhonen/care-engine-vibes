@@ -25,9 +25,14 @@ import { useLocale } from '../../contexts/LocaleContext'
 import { logUserAction } from '../../utils/storage'
 import { calculatePathwayOverrideImpact } from '../../utils/impactAnalysis'
 import { logPathwayOverrideChange } from '../../utils/changeHistory'
+import { validatePathwayTemplate, ValidationResult } from '../../utils/pathwayValidation'
+import { workflowStateManager, WorkflowMetadata, WorkflowCapabilities } from '../../utils/workflowStates'
+import { notificationManager } from '../../utils/notificationSystem'
+import { nhgDeviationAnalyzer, NHGDeviation } from '../../utils/nhgDeviationAnalysis'
 import Button from '../atoms/Button'
 import Badge from '../atoms/Badge'
 import Toast from '../atoms/Toast'
+import ClinicalTooltip from '../atoms/ClinicalTooltip'
 import ImpactPreviewModal from './ImpactPreviewModal'
 
 interface PathwayOverrideEditorProps {
@@ -56,6 +61,11 @@ function PathwayOverrideEditor({
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null)
   const [showImpactPreview, setShowImpactPreview] = useState(false)
   const [impactData, setImpactData] = useState<any>(null)
+  const [validation, setValidation] = useState<ValidationResult | null>(null)
+  const [workflow, setWorkflow] = useState<WorkflowMetadata | null>(null)
+  const [capabilities, setCapabilities] = useState<WorkflowCapabilities | null>(null)
+  const [deviations, setDeviations] = useState<NHGDeviation[]>([])
+  const [workflowAction, setWorkflowAction] = useState<'draft' | 'review' | 'publish' | null>(null)
 
   const riskLevel = calculateRiskLevel(originalTemplate, override.overrides)
   const needsApproval = requiresDualApproval(riskLevel)
@@ -67,6 +77,37 @@ function PathwayOverrideEditor({
       pendingApproval: needsApproval && !prev.approvedBy?.length
     }))
   }, [riskLevel, needsApproval])
+
+  useEffect(() => {
+    // Update validation
+    const validationResult = validatePathwayTemplate(originalTemplate, override)
+    setValidation(validationResult)
+
+    // Update deviations
+    const nhgDeviations = nhgDeviationAnalyzer.analyzeDeviations(originalTemplate, override)
+    setDeviations(nhgDeviations)
+
+    // Initialize or update workflow
+    let workflowMetadata = workflowStateManager.getWorkflowMetadata(override.id)
+    if (!workflowMetadata) {
+      workflowMetadata = workflowStateManager.initializeWorkflow(
+        override.id,
+        user.id,
+        user.name,
+        'draft'
+      )
+    }
+    setWorkflow(workflowMetadata)
+
+    // Update capabilities
+    const workflowCapabilities = workflowStateManager.getWorkflowCapabilities(
+      workflowMetadata.currentState,
+      user.role,
+      user.id,
+      workflowMetadata
+    )
+    setCapabilities(workflowCapabilities)
+  }, [override, originalTemplate, user])
 
   const canEdit = permissions.canConfigureThresholds
   const canApprove = permissions.canApproveMassActions // GPs can approve high-risk changes
@@ -118,7 +159,22 @@ function PathwayOverrideEditor({
     setJustification('')
   }
 
-  const handleSave = async () => {
+  const handleWorkflowAction = async (action: 'draft' | 'review' | 'publish') => {
+    if (!validation?.canSaveDraft && action === 'draft') {
+      setToast({ message: 'Cannot save draft due to validation errors', type: 'error' })
+      return
+    }
+    
+    if (!validation?.canRequestReview && action === 'review') {
+      setToast({ message: 'Cannot request review due to validation errors', type: 'error' })
+      return
+    }
+
+    if (!validation?.canPublish && action === 'publish') {
+      setToast({ message: 'Cannot publish due to validation errors', type: 'error' })
+      return
+    }
+
     if (!justification.trim()) {
       setToast({
         message: intl.formatMessage({ id: 'pathwayOverride.justificationRequired' }),
@@ -127,56 +183,121 @@ function PathwayOverrideEditor({
       return
     }
 
+    setWorkflowAction(action)
+
     const finalOverride = {
       ...override,
       justification: justification.trim()
     }
 
-    // Calculate impact and show preview
-    const impact = calculatePathwayOverrideImpact(originalTemplate, finalOverride)
-    setImpactData(impact)
-    setShowImpactPreview(true)
+    // For draft, save directly. For review/publish, show impact preview
+    if (action === 'draft') {
+      await handleConfirmSave(justification, 'draft')
+    } else {
+      // Calculate impact and show preview
+      const impact = calculatePathwayOverrideImpact(originalTemplate, finalOverride)
+      setImpactData(impact)
+      setShowImpactPreview(true)
+    }
   }
 
-  const handleConfirmSave = async (impactJustification: string) => {
+  // Legacy save function for backwards compatibility - unused but kept for reference
+  // const handleSave = () => handleWorkflowAction('draft')
+
+  const handleConfirmSave = async (impactJustification: string, workflowState?: 'draft' | 'review' | 'publish') => {
     const finalOverride = {
       ...override,
       justification: justification.trim()
     }
 
-    if (needsApproval && !finalOverride.approvedBy?.length) {
+    const targetState = workflowState || workflowAction || 'draft'
+
+    try {
+      // Update workflow state
+      if (workflow) {
+        const updatedWorkflow = workflowStateManager.transitionState(
+          override.id,
+          targetState === 'publish' ? 'published' : targetState,
+          user.id,
+          user.name,
+          impactJustification
+        )
+        setWorkflow(updatedWorkflow)
+      }
+
+      // Save override
+      LocalOverrideStorage.saveOverride(finalOverride)
+      
+      // Log the change with full impact data
+      logPathwayOverrideChange(
+        user.id,
+        user.name,
+        originalTemplate.name.en,
+        impactJustification,
+        impactData || {},
+        originalTemplate,
+        finalOverride
+      )
+      
+      logUserAction('pathway_override_created', {
+        templateId: originalTemplate.id,
+        overrideId: finalOverride.id,
+        riskLevel: finalOverride.riskLevel,
+        workflowState: targetState
+      })
+
+      // Handle notifications based on workflow state
+      if (targetState === 'review') {
+        notificationManager.notifyReviewRequested(
+          finalOverride,
+          originalTemplate,
+          user.name
+        )
+      } else if (targetState === 'publish') {
+        notificationManager.notifyPathwayPublished(
+          finalOverride,
+          originalTemplate,
+          workflow!
+        )
+
+        // Send NHG deviation notification if there are deviations
+        if (deviations.length > 0) {
+          notificationManager.notifyNHGDeviations(
+            finalOverride,
+            originalTemplate,
+            deviations.map(d => ({
+              field: d.field,
+              nhgValue: d.nhgValue,
+              localValue: d.localValue,
+              riskLevel: d.riskLevel
+            }))
+          )
+        }
+      }
+
+      onSave(finalOverride)
+      
+      const messages = {
+        draft: 'pathwayOverride.savedDraft',
+        review: 'pathwayOverride.reviewRequested', 
+        publish: 'pathwayOverride.published'
+      }
+      
       setToast({
-        message: intl.formatMessage({ id: 'pathwayOverride.approvalRequested' }),
-        type: 'info'
+        message: intl.formatMessage({ id: messages[targetState] || 'pathwayOverride.saved' }),
+        type: 'success'
+      })
+      
+      setShowImpactPreview(false)
+      setWorkflowAction(null)
+      
+    } catch (error) {
+      console.error('Error saving override:', error)
+      setToast({
+        message: 'Error saving override: ' + (error as Error).message,
+        type: 'error'
       })
     }
-
-    LocalOverrideStorage.saveOverride(finalOverride)
-    
-    // Log the change with full impact data
-    logPathwayOverrideChange(
-      user.id,
-      user.name,
-      originalTemplate.name.en,
-      impactJustification,
-      impactData,
-      originalTemplate,
-      finalOverride
-    )
-    
-    logUserAction('pathway_override_created', {
-      templateId: originalTemplate.id,
-      overrideId: finalOverride.id,
-      riskLevel: finalOverride.riskLevel,
-      needsApproval
-    })
-
-    onSave(finalOverride)
-    setToast({
-      message: intl.formatMessage({ id: 'pathwayOverride.saved' }),
-      type: 'success'
-    })
-    setShowImpactPreview(false)
   }
 
   const handleApproval = () => {
@@ -231,6 +352,166 @@ function PathwayOverrideEditor({
         {riskLevel === 'medium' && <Shield className="w-3 h-3 mr-1" />}
         <FormattedMessage id={`pathwayOverride.risk.${riskLevel}`} />
       </Badge>
+    )
+  }
+
+  const renderWorkflowStatusSection = () => {
+    if (!workflow) return null
+
+    const workflowColors = {
+      draft: 'bg-gray-100 border-gray-300 text-gray-800',
+      review: 'bg-yellow-100 border-yellow-300 text-yellow-800', 
+      published: 'bg-green-100 border-green-300 text-green-800',
+      archived: 'bg-red-100 border-red-300 text-red-800'
+    }
+
+    return (
+      <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <h4 className="font-medium text-gray-900">
+              <FormattedMessage id="pathwayOverride.workflowStatus" />
+            </h4>
+            <Badge className={workflowColors[workflow.currentState]}>
+              <FormattedMessage id={`pathwayOverride.workflow.${workflow.currentState}`} />
+            </Badge>
+          </div>
+          <div className="text-sm text-gray-600">
+            v{workflow.version} • {workflow.modifiedBy}
+          </div>
+        </div>
+        
+        {workflow.publishedAt && (
+          <div className="mt-2 text-sm text-gray-600">
+            <FormattedMessage 
+              id="pathwayOverride.publishedAt" 
+              values={{ 
+                date: new Date(workflow.publishedAt).toLocaleDateString(locale),
+                publisher: workflow.publishedBy
+              }}
+            />
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  const renderValidationSection = () => {
+    if (!validation) return null
+
+    const hasErrors = validation.errors.length > 0
+    const hasWarnings = validation.warnings.length > 0
+
+    if (!hasErrors && !hasWarnings) return null
+
+    return (
+      <div className={`border rounded-lg p-4 mb-6 ${
+        hasErrors ? 'bg-red-50 border-red-200' : 'bg-yellow-50 border-yellow-200'
+      }`}>
+        <div className="flex items-start space-x-3">
+          <AlertTriangle className={`w-5 h-5 mt-0.5 ${
+            hasErrors ? 'text-red-600' : 'text-yellow-600'
+          }`} />
+          <div className="flex-1">
+            <h4 className={`font-medium mb-2 ${
+              hasErrors ? 'text-red-900' : 'text-yellow-900'
+            }`}>
+              {hasErrors ? (
+                <FormattedMessage id="pathwayOverride.validationErrors" />
+              ) : (
+                <FormattedMessage id="pathwayOverride.validationWarnings" />
+              )}
+            </h4>
+            
+            {hasErrors && (
+              <div className="space-y-2 mb-3">
+                {validation.errors.map((error, index) => (
+                  <div key={index} className="text-sm text-red-800">
+                    • {error.message[locale]}
+                    {error.nhgReference && (
+                      <span className="ml-2 text-xs text-red-600">({error.nhgReference})</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {hasWarnings && (
+              <div className="space-y-2">
+                {validation.warnings.map((warning, index) => (
+                  <div key={index} className="text-sm text-yellow-800">
+                    • {warning.message[locale]}
+                    {warning.nhgReference && (
+                      <span className="ml-2 text-xs text-yellow-600">({warning.nhgReference})</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const renderNHGDeviationsSection = () => {
+    if (!deviations.length) return null
+
+    const criticalDeviations = deviations.filter(d => d.riskLevel === 'critical')
+    const highDeviations = deviations.filter(d => d.riskLevel === 'high')
+
+    return (
+      <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
+        <div className="flex items-start space-x-3">
+          <AlertTriangle className="w-5 h-5 text-orange-600 mt-0.5" />
+          <div className="flex-1">
+            <h4 className="font-medium text-orange-900 mb-2">
+              <FormattedMessage 
+                id="pathwayOverride.nhgDeviations" 
+                values={{ count: deviations.length }}
+              />
+            </h4>
+            
+            {criticalDeviations.length > 0 && (
+              <div className="mb-3">
+                <Badge className="bg-red-100 text-red-800 mb-2">
+                  <FormattedMessage 
+                    id="pathwayOverride.criticalDeviations" 
+                    values={{ count: criticalDeviations.length }}
+                  />
+                </Badge>
+                <div className="space-y-1">
+                  {criticalDeviations.map((deviation, index) => (
+                    <div key={index} className="text-sm text-red-800">
+                      • <strong>{deviation.field}:</strong> {deviation.localValue} 
+                      <span className="text-red-600"> (NHG: {deviation.nhgValue})</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {highDeviations.length > 0 && criticalDeviations.length === 0 && (
+              <div className="space-y-1">
+                {deviations.slice(0, 3).map((deviation, index) => (
+                  <div key={index} className="text-sm text-orange-800">
+                    • <strong>{deviation.field}:</strong> {deviation.localValue} 
+                    <span className="text-orange-600"> (NHG: {deviation.nhgValue})</span>
+                  </div>
+                ))}
+                {deviations.length > 3 && (
+                  <div className="text-sm text-orange-600">
+                    <FormattedMessage 
+                      id="pathwayOverride.moreDeviations" 
+                      values={{ count: deviations.length - 3 }}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     )
   }
 
@@ -426,9 +707,11 @@ function PathwayOverrideEditor({
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Delay - Safe to edit */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <FormattedMessage id="pathwayOverride.delay" />
-                  </label>
+                  <ClinicalTooltip field={`${originalStep.id}_delay`}>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <FormattedMessage id="pathwayOverride.delay" />
+                    </label>
+                  </ClinicalTooltip>
                   <input
                     type="number"
                     min="0"
@@ -449,9 +732,11 @@ function PathwayOverrideEditor({
 
                 {/* Enabled - Medium risk */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <FormattedMessage id="pathwayOverride.enabled" />
-                  </label>
+                  <ClinicalTooltip field={`${originalStep.id}_enabled`}>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <FormattedMessage id="pathwayOverride.enabled" />
+                    </label>
+                  </ClinicalTooltip>
                   <div className="flex items-center space-x-2">
                     <input
                       type="checkbox"
@@ -484,9 +769,11 @@ function PathwayOverrideEditor({
 
                 {/* Automated - Safe to edit */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <FormattedMessage id="pathwayOverride.automated" />
-                  </label>
+                  <ClinicalTooltip field={`${originalStep.id}_automated`}>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <FormattedMessage id="pathwayOverride.automated" />
+                    </label>
+                  </ClinicalTooltip>
                   <div className="flex items-center space-x-2">
                     <input
                       type="checkbox"
@@ -588,12 +875,15 @@ function PathwayOverrideEditor({
         </div>
       </div>
 
+      {renderWorkflowStatusSection()}
+      {renderValidationSection()}
+      {renderNHGDeviationsSection()}
       {renderApprovalSection()}
       {renderDiffView()}
       {renderStepEditor()}
       {renderJustificationSection()}
 
-      {/* Action Buttons */}
+      {/* Workflow Action Buttons */}
       <div className="flex items-center justify-between">
         <Button variant="outline" onClick={revertAllToDefault}>
           <RotateCcw className="w-4 h-4 mr-2" />
@@ -601,21 +891,39 @@ function PathwayOverrideEditor({
         </Button>
         
         <div className="flex items-center space-x-3">
-          {(!needsApproval || override.approvedBy?.length) && (
-            <Button onClick={handleSave} disabled={!hasChanges() || !justification.trim()}>
+          {/* Save Draft */}
+          {capabilities?.canSaveDraft && (
+            <Button 
+              variant="outline"
+              onClick={() => handleWorkflowAction('draft')}
+              disabled={!hasChanges() || !justification.trim()}
+            >
               <Save className="w-4 h-4 mr-2" />
-              <FormattedMessage id="pathwayOverride.save" />
+              <FormattedMessage id="pathwayOverride.saveDraft" />
             </Button>
           )}
           
-          {needsApproval && !override.approvedBy?.length && (
+          {/* Request Review */}
+          {capabilities?.canRequestReview && (
             <Button 
-              onClick={handleSave} 
-              disabled={!hasChanges() || !justification.trim()}
-              className="bg-amber-600 hover:bg-amber-700"
+              onClick={() => handleWorkflowAction('review')}
+              disabled={!hasChanges() || !justification.trim() || !validation?.canRequestReview}
+              className="bg-yellow-600 hover:bg-yellow-700"
             >
               <Users className="w-4 h-4 mr-2" />
-              <FormattedMessage id="pathwayOverride.requestApproval" />
+              <FormattedMessage id="pathwayOverride.requestReview" />
+            </Button>
+          )}
+          
+          {/* Publish */}
+          {capabilities?.canPublish && (
+            <Button 
+              onClick={() => handleWorkflowAction('publish')}
+              disabled={!hasChanges() || !justification.trim() || !validation?.canPublish}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              <CheckCircle className="w-4 h-4 mr-2" />
+              <FormattedMessage id="pathwayOverride.publish" />
             </Button>
           )}
         </div>
