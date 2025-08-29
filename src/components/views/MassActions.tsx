@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Users, ArrowRight, Send } from 'lucide-react'
+import { Users, ArrowRight, Send, Lock } from 'lucide-react'
 import patientsData from '../../mocks/patients.json'
 import cohortsData from '../../mocks/cohorts.json'
 import { Patient, Cohort, getPatientsByIds } from '../../utils/patientFilters'
 import { formatDate } from '../../utils/formatDate'
 import { useLocale } from '../../contexts/LocaleContext'
+import { useUser, getUserRolePermissions } from '../../contexts/UserContext'
 import { logUserAction } from '../../utils/storage'
 import Button from '../atoms/Button'
 import TranslatableSelect from '../atoms/TranslatableSelect'
@@ -25,6 +26,8 @@ interface AppointmentSlot {
 function MassActions() {
   const intl = useIntl()
   const { locale } = useLocale()
+  const { user } = useUser()
+  const permissions = getUserRolePermissions(user.role)
   const [currentStep, setCurrentStep] = useState<Step>('selectCohort')
   const [selectedCohort, setSelectedCohort] = useState<string>('')
   const [actionType, setActionType] = useState<ActionType>('outreach')
@@ -376,11 +379,44 @@ function MassActions() {
     }
   }
 
+  // Check if user has permission to approve mass actions
+  if (!permissions.canApproveMassActions) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-semibold text-gray-900">
+          <FormattedMessage id="massActions.title" />
+        </h1>
+
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+          <Lock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-lg font-medium text-gray-900 mb-2">
+            <FormattedMessage id="massActions.restricted.title" />
+          </h2>
+          <p className="text-gray-600 max-w-md mx-auto">
+            <FormattedMessage id="massActions.restricted.description" values={{ role: intl.formatMessage({ id: `userRole.${user.role}` }) }} />
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold text-gray-900">
-        <FormattedMessage id="massActions.title" />
-      </h1>
+      <div>
+        <h1 className="text-2xl font-semibold text-gray-900">
+          <FormattedMessage id="massActions.title" />
+        </h1>
+        {user.role === 'gp' && (
+          <p className="text-sm text-gray-600 mt-1">
+            <FormattedMessage id="massActions.subtitle.gp" />
+          </p>
+        )}
+        {user.role === 'poh-s' && (
+          <p className="text-sm text-gray-600 mt-1">
+            <FormattedMessage id="massActions.subtitle.pohS" />
+          </p>
+        )}
+      </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         {renderStep()}

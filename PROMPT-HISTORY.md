@@ -61,3 +61,18 @@ You are simply wrong. Now cohorts.json has only english texts. Add both locales 
 
 ### Prompt 20
 Config route has just a placeholder text. Make the UI POC according to SPEC.md
+
+### Prompt 21
+Currently the UI offers functionality for the POH-S. Make the user selection have the two other roles. Changing roles should be reflected in the UI, check SPEC.md to see how they differ.
+
+### Prompt 22
+Please continue the conversation from where we left it off without asking the user any further questions. Continue with the last task that you were asked to work on.
+
+### Prompt 23
+Continue where you left off.
+
+### Prompt 24
+"Add a Pathway Templates Library to the Configuration section. Pre-load the library with NHG-default chronic care pathways: T2DM, hypertension, and asthma/COPD. Each template should be locked read-only at first, clearly marked 'NHG Default' with versioning info, summary tiles, and an edit badge (if ever locally modified)."
+
+### Prompt 25
+"Enable authorized practice users to create a 'Local Override' of any pathway template. Allow editing only on specific safe fields (e.g., visit intervals, step channels, optional step inclusion/exclusion). Show a side-by-side diff view: NHG Default vs. Local Override, highlight all deviations, and include 'Revert to Default' and 'Save with note' capabilities. Require justification and dual-approval for risky overrides (e.g., removing critical annual reviews)."

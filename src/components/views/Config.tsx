@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Settings, AlertTriangle, Users, TrendingUp, Save, RotateCcw } from 'lucide-react'
+import { Settings, AlertTriangle, Users, TrendingUp, Save, RotateCcw, Lock, FileText } from 'lucide-react'
 import { SettingsStorage, AppSettings } from '../../utils/storage'
+import { useUser, getUserRolePermissions } from '../../contexts/UserContext'
 import patientsData from '../../mocks/patients.json'
 import { Patient } from '../../utils/patientFilters'
 import Button from '../atoms/Button'
 import Badge from '../atoms/Badge'
 import Toast from '../atoms/Toast'
+import PathwayTemplateLibrary from '../organisms/PathwayTemplateLibrary'
 
 interface PathwayStep {
   id: string
@@ -19,9 +21,11 @@ interface PathwayStep {
 
 function Config() {
   const intl = useIntl()
+  const { user } = useUser()
+  const permissions = getUserRolePermissions(user.role)
   const [settings, setSettings] = useState<AppSettings>(SettingsStorage.getDefaultSettings())
   const [tempSettings, setTempSettings] = useState<AppSettings>(settings)
-  const [activeTab, setActiveTab] = useState<'thresholds' | 'pathways' | 'governance'>('thresholds')
+  const [activeTab, setActiveTab] = useState<'thresholds' | 'pathways' | 'templates' | 'governance'>('thresholds')
   const [hasChanges, setHasChanges] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null)
 
@@ -324,6 +328,10 @@ function Config() {
     </div>
   )
 
+  const renderPathwayTemplates = () => (
+    <PathwayTemplateLibrary />
+  )
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -357,6 +365,7 @@ function Config() {
           {[
             { key: 'thresholds', labelId: 'config.tabs.thresholds', icon: TrendingUp },
             { key: 'pathways', labelId: 'config.tabs.pathways', icon: Users },
+            { key: 'templates', labelId: 'config.tabs.templates', icon: FileText },
             { key: 'governance', labelId: 'config.tabs.governance', icon: Settings }
           ].map(({ key, labelId, icon: Icon }) => (
             <button
@@ -378,7 +387,22 @@ function Config() {
       {/* Tab Content */}
       {activeTab === 'thresholds' && renderThresholds()}
       {activeTab === 'pathways' && renderPathways()}
-      {activeTab === 'governance' && renderGovernance()}
+      {activeTab === 'templates' && renderPathwayTemplates()}
+      {activeTab === 'governance' && (
+        permissions.canManageGovernance ? (
+          renderGovernance()
+        ) : (
+          <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+            <Lock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h2 className="text-lg font-medium text-gray-900 mb-2">
+              <FormattedMessage id="config.governance.restricted.title" />
+            </h2>
+            <p className="text-gray-600 max-w-md mx-auto">
+              <FormattedMessage id="config.governance.restricted.description" />
+            </p>
+          </div>
+        )
+      )}
 
       {/* Toast notifications */}
       {toast && (

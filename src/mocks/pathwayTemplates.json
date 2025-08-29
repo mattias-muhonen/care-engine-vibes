@@ -1,0 +1,288 @@
+[
+  {
+    "id": "nhg-t2dm-v2024",
+    "name": {
+      "nl": "Type 2 Diabetes Mellitus Zorgpad",
+      "en": "Type 2 Diabetes Mellitus Care Pathway"
+    },
+    "description": {
+      "nl": "NHG-standaard voor T2DM monitoring en interventie volgens de richtlijnen van 2024",
+      "en": "NHG standard for T2DM monitoring and intervention according to 2024 guidelines"
+    },
+    "condition": "T2DM",
+    "version": "2024.1",
+    "isNHGDefault": true,
+    "isModified": false,
+    "lastModified": null,
+    "createdBy": "NHG",
+    "summary": {
+      "totalSteps": 4,
+      "avgDuration": "6 months",
+      "priority": "high"
+    },
+    "thresholds": {
+      "hba1c": 70,
+      "systolic": 140,
+      "diastolic": 90,
+      "bmi": 30
+    },
+    "steps": [
+      {
+        "id": "initial_screening",
+        "name": {
+          "nl": "Initiële Screening",
+          "en": "Initial Screening"
+        },
+        "trigger": {
+          "nl": "HbA1c > 70 mmol/mol of nieuwe diagnose",
+          "en": "HbA1c > 70 mmol/mol or new diagnosis"
+        },
+        "action": {
+          "nl": "Uitgebreid intake gesprek en baseline metingen",
+          "en": "Comprehensive intake and baseline measurements"
+        },
+        "delay": 0,
+        "enabled": true,
+        "automated": false
+      },
+      {
+        "id": "lifestyle_intervention",
+        "name": {
+          "nl": "Leefstijl Interventie",
+          "en": "Lifestyle Intervention"
+        },
+        "trigger": {
+          "nl": "Na initiële screening",
+          "en": "After initial screening"
+        },
+        "action": {
+          "nl": "Voeding- en bewegingsadvies, verwijzing diëtist indien nodig",
+          "en": "Nutrition and exercise advice, dietitian referral if needed"
+        },
+        "delay": 1,
+        "enabled": true,
+        "automated": true
+      },
+      {
+        "id": "follow_up_3m",
+        "name": {
+          "nl": "3-Maanden Controle",
+          "en": "3-Month Follow-up"
+        },
+        "trigger": {
+          "nl": "3 maanden na start interventie",
+          "en": "3 months after intervention start"
+        },
+        "action": {
+          "nl": "HbA1c controle, medicatie evaluatie",
+          "en": "HbA1c check, medication evaluation"
+        },
+        "delay": 90,
+        "enabled": true,
+        "automated": true
+      },
+      {
+        "id": "annual_review",
+        "name": {
+          "nl": "Jaarlijkse Evaluatie",
+          "en": "Annual Review"
+        },
+        "trigger": {
+          "nl": "Jaarlijks terugkerende controle",
+          "en": "Annual recurring check"
+        },
+        "action": {
+          "nl": "Volledige evaluatie: HbA1c, lipiden, nieren, ogen",
+          "en": "Complete evaluation: HbA1c, lipids, kidneys, eyes"
+        },
+        "delay": 365,
+        "enabled": true,
+        "automated": true
+      }
+    ]
+  },
+  {
+    "id": "nhg-hypertension-v2024",
+    "name": {
+      "nl": "Hypertensie Zorgpad",
+      "en": "Hypertension Care Pathway"
+    },
+    "description": {
+      "nl": "NHG-standaard voor hypertensie monitoring en behandeling volgens 2024 richtlijnen",
+      "en": "NHG standard for hypertension monitoring and treatment per 2024 guidelines"
+    },
+    "condition": "Hypertension",
+    "version": "2024.1",
+    "isNHGDefault": true,
+    "isModified": false,
+    "lastModified": null,
+    "createdBy": "NHG",
+    "summary": {
+      "totalSteps": 3,
+      "avgDuration": "3 months",
+      "priority": "high"
+    },
+    "thresholds": {
+      "systolic": 140,
+      "diastolic": 90,
+      "pulse": 100
+    },
+    "steps": [
+      {
+        "id": "bp_confirmation",
+        "name": {
+          "nl": "Bloeddruk Bevestiging",
+          "en": "Blood Pressure Confirmation"
+        },
+        "trigger": {
+          "nl": "Verhoogde bloeddruk > 140/90 mmHg",
+          "en": "Elevated blood pressure > 140/90 mmHg"
+        },
+        "action": {
+          "nl": "Thuismeting of 24-uurs meting voor bevestiging",
+          "en": "Home measurement or 24-hour monitoring for confirmation"
+        },
+        "delay": 0,
+        "enabled": true,
+        "automated": true
+      },
+      {
+        "id": "lifestyle_counseling",
+        "name": {
+          "nl": "Leefstijladvies",
+          "en": "Lifestyle Counseling"
+        },
+        "trigger": {
+          "nl": "Na bevestiging hypertensie",
+          "en": "After hypertension confirmation"
+        },
+        "action": {
+          "nl": "Zoutbeperking, gewichtsverlies, bewegingsadvies",
+          "en": "Salt restriction, weight loss, exercise advice"
+        },
+        "delay": 7,
+        "enabled": true,
+        "automated": true
+      },
+      {
+        "id": "monthly_monitoring",
+        "name": {
+          "nl": "Maandelijkse Monitoring",
+          "en": "Monthly Monitoring"
+        },
+        "trigger": {
+          "nl": "Maandelijks tot streefwaarde bereikt",
+          "en": "Monthly until target achieved"
+        },
+        "action": {
+          "nl": "Bloeddruk controle en medicatie aanpassing",
+          "en": "Blood pressure check and medication adjustment"
+        },
+        "delay": 30,
+        "enabled": true,
+        "automated": true
+      }
+    ]
+  },
+  {
+    "id": "nhg-asthma-copd-v2024",
+    "name": {
+      "nl": "Astma/COPD Zorgpad",
+      "en": "Asthma/COPD Care Pathway"
+    },
+    "description": {
+      "nl": "NHG-standaard voor astma en COPD monitoring en exacerbatie preventie",
+      "en": "NHG standard for asthma and COPD monitoring and exacerbation prevention"
+    },
+    "condition": "Respiratory",
+    "version": "2024.1",
+    "isNHGDefault": true,
+    "isModified": false,
+    "lastModified": null,
+    "createdBy": "NHG",
+    "summary": {
+      "totalSteps": 4,
+      "avgDuration": "12 months",
+      "priority": "medium"
+    },
+    "thresholds": {
+      "fev1": 80,
+      "peakFlow": 350,
+      "symptomsPerWeek": 2
+    },
+    "steps": [
+      {
+        "id": "spirometry_baseline",
+        "name": {
+          "nl": "Longfunctie Baseline",
+          "en": "Lung Function Baseline"
+        },
+        "trigger": {
+          "nl": "Nieuwe diagnose of jaarlijkse controle",
+          "en": "New diagnosis or annual check"
+        },
+        "action": {
+          "nl": "Spirometrie en reversibiliteitstest",
+          "en": "Spirometry and reversibility test"
+        },
+        "delay": 0,
+        "enabled": true,
+        "automated": false
+      },
+      {
+        "id": "inhaler_technique",
+        "name": {
+          "nl": "Inhalatietechniek Training",
+          "en": "Inhaler Technique Training"
+        },
+        "trigger": {
+          "nl": "Na diagnose of bij suboptimale controle",
+          "en": "After diagnosis or suboptimal control"
+        },
+        "action": {
+          "nl": "Demonstratie en training juiste inhalatietechniek",
+          "en": "Demonstration and training of proper inhaler technique"
+        },
+        "delay": 7,
+        "enabled": true,
+        "automated": true
+      },
+      {
+        "id": "quarterly_review",
+        "name": {
+          "nl": "Kwartaal Evaluatie",
+          "en": "Quarterly Review"
+        },
+        "trigger": {
+          "nl": "Elke 3 maanden voor controle optimalisatie",
+          "en": "Every 3 months for control optimization"
+        },
+        "action": {
+          "nl": "Symptoomcontrole, medicatie review, peak flow",
+          "en": "Symptom control, medication review, peak flow"
+        },
+        "delay": 90,
+        "enabled": true,
+        "automated": true
+      },
+      {
+        "id": "vaccination_reminder",
+        "name": {
+          "nl": "Vaccinatie Herinnering",
+          "en": "Vaccination Reminder"
+        },
+        "trigger": {
+          "nl": "Jaarlijks in oktober voor griepvaccinatie",
+          "en": "Annually in October for flu vaccination"
+        },
+        "action": {
+          "nl": "Uitnodiging voor griep- en pneumokokken vaccinatie",
+          "en": "Invitation for flu and pneumococcal vaccination"
+        },
+        "delay": 365,
+        "enabled": true,
+        "automated": true
+      }
+    ]
+  }
+]
