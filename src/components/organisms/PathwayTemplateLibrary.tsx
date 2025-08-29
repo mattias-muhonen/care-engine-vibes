@@ -10,12 +10,15 @@ import {
   Copy,
   Eye,
   Settings,
-  Zap
+  Zap,
+  Shield
 } from 'lucide-react'
 import { useLocale } from '../../contexts/LocaleContext'
 import { useUser, getUserRolePermissions } from '../../contexts/UserContext'
 import { PathwayTemplate } from '../../types/pathway'
 import { LocalOverride, LocalOverrideStorage } from '../../utils/pathwayOverrides'
+import { nhgDeviationAnalyzer } from '../../utils/nhgDeviationAnalysis'
+import { validatePathwayTemplate } from '../../utils/pathwayValidation'
 import pathwayTemplatesData from '../../mocks/pathwayTemplates.json'
 import PathwayOverrideEditor from './PathwayOverrideEditor'
 import Button from '../atoms/Button'
@@ -100,6 +103,21 @@ function PathwayTemplateLibrary(_props: PathwayTemplateLibraryProps) {
 
   const renderTemplateGrid = () => (
     <div className="space-y-6">
+      {/* Safety-First Header */}
+      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="flex items-start gap-3">
+          <CheckCircle className="w-6 h-6 text-green-600 mt-0.5" />
+          <div>
+            <h3 className="font-semibold text-green-900 mb-1">
+              <FormattedMessage id="pathwayLibrary.safetyFirst" />
+            </h3>
+            <p className="text-sm text-green-800">
+              <FormattedMessage id="pathwayLibrary.nhgDefaults" />
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-900">
@@ -109,10 +127,21 @@ function PathwayTemplateLibrary(_props: PathwayTemplateLibraryProps) {
             <FormattedMessage id="pathwayLibrary.subtitle" />
           </p>
         </div>
-        <Badge variant="default" className="flex items-center">
-          <FileText className="w-3 h-3 mr-1" />
-          {templates.length} <FormattedMessage id="pathwayLibrary.templates" />
-        </Badge>
+        
+        <div className="flex items-center gap-3">
+          <Badge variant="success" className="flex items-center">
+            <Shield className="w-3 h-3 mr-1" />
+            {templates.filter(t => t.isNHGDefault && !localOverrides.some(o => o.originalTemplateId === t.id)).length} NHG Compliant
+          </Badge>
+          <Badge variant="warning" className="flex items-center">
+            <AlertCircle className="w-3 h-3 mr-1" />
+            {localOverrides.length} Modified
+          </Badge>
+          <Badge variant="default" className="flex items-center">
+            <FileText className="w-3 h-3 mr-1" />
+            {templates.length} Total
+          </Badge>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -120,10 +149,31 @@ function PathwayTemplateLibrary(_props: PathwayTemplateLibraryProps) {
           const hasOverride = localOverrides.some(o => o.originalTemplateId === template.id)
           const override = localOverrides.find(o => o.originalTemplateId === template.id)
           
+          // Analyze deviations and validation for this override
+          let deviations = []
+          let overallRisk = 'safe'
+          
+          if (override) {
+            deviations = nhgDeviationAnalyzer.analyzeDeviations(template, override)
+            validatePathwayTemplate(template, override) // For side effects, not storing result
+            
+            const criticalCount = deviations.filter(d => d.riskLevel === 'critical').length
+            const highCount = deviations.filter(d => d.riskLevel === 'high').length
+            
+            if (criticalCount > 0) overallRisk = 'critical'
+            else if (highCount > 0) overallRisk = 'high'
+            else if (deviations.length > 0) overallRisk = 'medium'
+          }
+          
           return (
             <div
               key={template.id}
-              className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
+              className={`bg-white rounded-lg border-2 p-6 hover:shadow-md transition-all ${
+                overallRisk === 'critical' ? 'border-red-400 bg-red-50' :
+                overallRisk === 'high' ? 'border-orange-400 bg-orange-50' :
+                overallRisk === 'medium' ? 'border-yellow-400 bg-yellow-50' :
+                hasOverride ? 'border-blue-400 bg-blue-50' : 'border-gray-200'
+              }`}
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
@@ -138,15 +188,44 @@ function PathwayTemplateLibrary(_props: PathwayTemplateLibraryProps) {
                     </p>
                   </div>
                 </div>
+                
                 <div className="flex flex-col items-end space-y-1">
-                  {template.isNHGDefault && (
-                    <Badge variant="default" className="text-xs">
-                      <Lock className="w-3 h-3 mr-1" />
-                      NHG Default
+                  {/* NHG Default Badge - Always show prominently */}
+                  {template.isNHGDefault && !hasOverride && (
+                    <Badge variant="success" className="text-xs">
+                      <CheckCircle className="w-3 h-3 mr-1" />
+                      NHG Compliant
                     </Badge>
                   )}
-                  {hasOverride && (
+                  
+                  {/* Deviation Risk Indicators */}
+                  {hasOverride && overallRisk === 'critical' && (
+                    <Badge variant="critical" className="text-xs">
+                      <AlertCircle className="w-3 h-3 mr-1" />
+                      Critical Risk
+                    </Badge>
+                  )}
+                  {hasOverride && overallRisk === 'high' && (
                     <Badge variant="warning" className="text-xs">
+                      <AlertCircle className="w-3 h-3 mr-1" />
+                      High Risk
+                    </Badge>
+                  )}
+                  {hasOverride && overallRisk === 'medium' && (
+                    <Badge variant="warning" className="text-xs">
+                      <AlertCircle className="w-3 h-3 mr-1" />
+                      Modified
+                    </Badge>
+                  )}
+                  {hasOverride && overallRisk === 'safe' && (
+                    <Badge variant="default" className="text-xs">
+                      <CheckCircle className="w-3 h-3 mr-1" />
+                      Low Risk Override
+                    </Badge>
+                  )}
+                  
+                  {hasOverride && (
+                    <Badge variant="default" className="text-xs">
                       <Zap className="w-3 h-3 mr-1" />
                       <FormattedMessage id="pathwayLibrary.localOverride" />
                     </Badge>

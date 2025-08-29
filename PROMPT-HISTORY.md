@@ -88,3 +88,20 @@ The patient cards in Cohort Details have a small eye icon to open patientdetails
 
 ### Prompt 29
 "Before publishing any configuration or override, display an 'Impact Preview' dialog: show the number of patients affected, changes in cohort size, system workload impact, and next due dates. Log all changes with: who made them, when, and justification. Provide an instant undo and change history view."
+
+## 2025-08-29
+
+### Prompt 30
+"For any editable field, include a context-sensitive tooltip with rationale/clinical logic from NHG. Block pathways from saving if required steps or notification channels are missing. Allow only 'Save Draft', 'Request Review', and 'Publish' as states. Notify all practice users of published updates; highlight any NHG-to-local deviations in-app and in audit."
+
+### Prompt 31
+Add storybook for atoms, molecules and organisms.
+
+### Prompt 32
+Stories are not using the components in components/ folder. Make sure that stories do not create new components, just import existing ones.
+
+### Prompt 33
+"For any editable field, include a context-sensitive tooltip with rationale/clinical logic from NHG. Block pathways from saving if required steps or notification channels are missing. Allow only 'Save Draft', 'Request Review', and 'Publish' as states. Notify all practice users of published updates; highlight any NHG-to-local deviations in-app and in audit."
+
+### Prompt 34
+"Interfaces must always default to a safe, NHG-backed pathway and clearly indicate any local or patient-specific deviations. The pathway builder must be visual, step-based, never a blank canvas. All steps and customizations must be fully auditable, reversible, and show operational impact prior to publishing."

@@ -17,7 +17,6 @@ import {
   createLocalOverride,
   calculateRiskLevel,
   requiresDualApproval,
-  isCriticalStep,
   LocalOverrideStorage
 } from '../../utils/pathwayOverrides'
 import { useUser, getUserRolePermissions } from '../../contexts/UserContext'
@@ -32,8 +31,8 @@ import { nhgDeviationAnalyzer, NHGDeviation } from '../../utils/nhgDeviationAnal
 import Button from '../atoms/Button'
 import Badge from '../atoms/Badge'
 import Toast from '../atoms/Toast'
-import ClinicalTooltip from '../atoms/ClinicalTooltip'
 import ImpactPreviewModal from './ImpactPreviewModal'
+import VisualPathwayBuilder from './VisualPathwayBuilder'
 
 interface PathwayOverrideEditorProps {
   originalTemplate: PathwayTemplate
@@ -109,7 +108,7 @@ function PathwayOverrideEditor({
     setCapabilities(workflowCapabilities)
   }, [override, originalTemplate, user])
 
-  const canEdit = permissions.canConfigureThresholds
+  // const canEdit = permissions.canConfigureThresholds
   const canApprove = permissions.canApproveMassActions // GPs can approve high-risk changes
 
   const updateStepOverride = (stepIndex: number, field: keyof PathwayStep, value: any) => {
@@ -661,165 +660,12 @@ function PathwayOverrideEditor({
     )
   }
 
+  // Legacy step editor - replaced by VisualPathwayBuilder
+  /*
   const renderStepEditor = () => (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        <FormattedMessage id="pathwayOverride.stepEditor" />
-      </h3>
-
-      <div className="space-y-6">
-        {originalTemplate.steps.map((originalStep, index) => {
-          const effectiveStep = getEffectiveStep(index)
-          const hasOverrides = Object.keys(override.overrides.steps[index] || {}).length > 0
-          const isCritical = isCriticalStep(originalStep.id)
-
-          return (
-            <div 
-              key={originalStep.id} 
-              className={`border rounded-lg p-4 ${hasOverrides ? 'border-yellow-300 bg-yellow-50' : 'border-gray-200'}`}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
-                    {index + 1}
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">
-                      {originalStep.name[locale]}
-                    </h4>
-                    {isCritical && (
-                      <Badge variant="critical" className="text-xs mt-1">
-                        <Shield className="w-3 h-3 mr-1" />
-                        <FormattedMessage id="pathwayOverride.criticalStep" />
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-                
-                {hasOverrides && (
-                  <Button variant="outline" size="sm" onClick={() => revertStep(index)}>
-                    <RotateCcw className="w-3 h-3 mr-1" />
-                    <FormattedMessage id="pathwayOverride.revert" />
-                  </Button>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Delay - Safe to edit */}
-                <div>
-                  <ClinicalTooltip field={`${originalStep.id}_delay`}>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      <FormattedMessage id="pathwayOverride.delay" />
-                    </label>
-                  </ClinicalTooltip>
-                  <input
-                    type="number"
-                    min="0"
-                    max="365"
-                    value={effectiveStep.delay}
-                    onChange={(e) => updateStepOverride(index, 'delay', parseInt(e.target.value) || 0)}
-                    disabled={!canEdit}
-                    className={`w-full px-3 py-2 border rounded-md text-sm ${
-                      originalStep.delay !== effectiveStep.delay 
-                        ? 'border-yellow-300 bg-yellow-50' 
-                        : 'border-gray-300'
-                    } ${!canEdit ? 'bg-gray-50 text-gray-500' : ''}`}
-                  />
-                  <div className="text-xs text-gray-500 mt-1">
-                    <FormattedMessage id="pathwayOverride.originalValue" />: {originalStep.delay}
-                  </div>
-                </div>
-
-                {/* Enabled - Medium risk */}
-                <div>
-                  <ClinicalTooltip field={`${originalStep.id}_enabled`}>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      <FormattedMessage id="pathwayOverride.enabled" />
-                    </label>
-                  </ClinicalTooltip>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      checked={effectiveStep.enabled}
-                      onChange={(e) => updateStepOverride(index, 'enabled', e.target.checked)}
-                      disabled={!canEdit || (isCritical && !canApprove)}
-                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                    />
-                    <span className="text-sm text-gray-700">
-                      {effectiveStep.enabled ? 
-                        <FormattedMessage id="pathwayOverride.stepEnabled" /> :
-                        <FormattedMessage id="pathwayOverride.stepDisabled" />
-                      }
-                    </span>
-                    {isCritical && !effectiveStep.enabled && (
-                      <AlertTriangle className="w-4 h-4 text-red-500" />
-                    )}
-                  </div>
-                  {originalStep.enabled !== effectiveStep.enabled && (
-                    <div className="text-xs text-yellow-600 mt-1">
-                      <FormattedMessage 
-                        id="pathwayOverride.originalValue" 
-                      />: {originalStep.enabled ? 
-                        intl.formatMessage({ id: 'pathwayOverride.enabled' }) :
-                        intl.formatMessage({ id: 'pathwayOverride.disabled' })
-                      }
-                    </div>
-                  )}
-                </div>
-
-                {/* Automated - Safe to edit */}
-                <div>
-                  <ClinicalTooltip field={`${originalStep.id}_automated`}>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      <FormattedMessage id="pathwayOverride.automated" />
-                    </label>
-                  </ClinicalTooltip>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      checked={effectiveStep.automated}
-                      onChange={(e) => updateStepOverride(index, 'automated', e.target.checked)}
-                      disabled={!canEdit}
-                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                    />
-                    <span className="text-sm text-gray-700">
-                      {effectiveStep.automated ? 
-                        <FormattedMessage id="pathwayOverride.automatic" /> :
-                        <FormattedMessage id="pathwayOverride.manual" />
-                      }
-                    </span>
-                  </div>
-                  {originalStep.automated !== effectiveStep.automated && (
-                    <div className="text-xs text-yellow-600 mt-1">
-                      <FormattedMessage 
-                        id="pathwayOverride.originalValue" 
-                      />: {originalStep.automated ? 
-                        intl.formatMessage({ id: 'pathwayOverride.automatic' }) :
-                        intl.formatMessage({ id: 'pathwayOverride.manual' })
-                      }
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Read-only fields */}
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <div className="text-sm text-gray-600">
-                  <strong><FormattedMessage id="pathwayOverride.trigger" />:</strong> {originalStep.trigger[locale]}
-                </div>
-                <div className="text-sm text-gray-600 mt-1">
-                  <strong><FormattedMessage id="pathwayOverride.action" />:</strong> {originalStep.action[locale]}
-                </div>
-                <div className="text-xs text-gray-500 mt-2">
-                  <FormattedMessage id="pathwayOverride.readOnlyFields" />
-                </div>
-              </div>
-            </div>
-          )
-        })}
-      </div>
-    </div>
+    // ... implementation commented out as it's replaced by VisualPathwayBuilder
   )
+  */
 
   const renderJustificationSection = () => (
     <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
@@ -880,7 +726,17 @@ function PathwayOverrideEditor({
       {renderNHGDeviationsSection()}
       {renderApprovalSection()}
       {renderDiffView()}
-      {renderStepEditor()}
+      
+      {/* Visual Pathway Builder */}
+      <VisualPathwayBuilder
+        template={originalTemplate}
+        override={override}
+        onStepEdit={updateStepOverride}
+        onRevertStep={revertStep}
+        onRevertAll={revertAllToDefault}
+        readonly={!capabilities?.canEdit}
+      />
+      
       {renderJustificationSection()}
 
       {/* Workflow Action Buttons */}
