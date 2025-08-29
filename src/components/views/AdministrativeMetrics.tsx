@@ -215,6 +215,27 @@ function AdministrativeMetrics() {
         </p>
       </div>
 
+      {/* Value Add Metrics */}
+      <section>
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+          <FormattedMessage id="administrativeMetrics.valueAdd" />
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {valueAdd.map((metric) => {
+            const IconComponent = getMetricIcon(metric.name)
+            return (
+              <Tile
+                key={metric.name}
+                icon={IconComponent}
+                title={getTranslatedMetricTitle(metric)}
+                value={formatMetricValue(metric)}
+                variant={getStatusVariant(metric)}
+              />
+            )
+          })}
+        </div>
+      </section>
+
       {/* Core Metrics */}
       <section>
         <h2 className="text-lg font-semibold text-gray-800 mb-4">
@@ -271,27 +292,6 @@ function AdministrativeMetrics() {
               {trend.type === 'categorical' && renderCategoricalChart(trend)}
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Value Add Metrics */}
-      <section>
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">
-          <FormattedMessage id="administrativeMetrics.valueAdd" />
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {valueAdd.map((metric) => {
-            const IconComponent = getMetricIcon(metric.name)
-            return (
-              <Tile
-                key={metric.name}
-                icon={IconComponent}
-                title={getTranslatedMetricTitle(metric)}
-                value={formatMetricValue(metric)}
-                variant={getStatusVariant(metric)}
-              />
-            )
-          })}
         </div>
       </section>
     </div>
